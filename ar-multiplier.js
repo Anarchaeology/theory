@@ -31,7 +31,7 @@
   };
 
   let cap, measured = [], unmeasured = [], xMin = 1000, xMax = 3000, geom = null;
-  const state = { on: new Set(), view: 'mult', old: true, readings: false, hover: null, cmp: { a: null, b: null, ar: 2075 } };
+  const state = { on: new Set(), view: 'mult', old: true, hover: null, cmp: { a: null, b: null, ar: 2075 } };
 
   // The old number's straight line, the measured curve (null outside what was measured) and the gap between them in percent.
   const oldAt = (p, ar) => ar <= cap.ar ? ar / cap.arPerPoint + 1 : cap.multiplier + (ar - cap.ar) / cap.arPerPoint * p.old;
@@ -124,9 +124,7 @@
         draw(); showTip();
       };
     }
-    $('opt-old').onchange = e => { state.old = e.target.checked; draw(); showTip(); };
-    $('opt-readings').onchange = e => { state.readings = e.target.checked; draw(); };
-  }
+    $('opt-old').onchange = e => { state.old = e.target.checked; draw(); showTip(); };  }
 
   function highlight(id) {
     for (const g of document.querySelectorAll('#plot .series')) g.classList.toggle('dim', id != null && g.dataset.id !== id);
@@ -141,7 +139,7 @@
     const plot = $('plot');
     const W = Math.max(280, plot.clientWidth - 10), narrow = W < 560;
     const H = Math.round(Math.max(290, Math.min(470, W * 0.54)));
-    const m = { t: 30, r: narrow ? 14 : 82, b: 42, l: 46 };
+    const m = { t: 24, r: narrow ? 14 : 82, b: 42, l: 46 };
     const pw = W - m.l - m.r, ph = H - m.t - m.b;
     const vis = measured.filter(p => state.on.has(p.id));
     const forFit = vis.length ? vis : measured;
@@ -189,13 +187,6 @@
     grid.append(el('text', { x: m.l + pw, y: H - 5, 'text-anchor': 'end', class: 'axis-title' }, 'Attack rating'));
     svg.append(grid);
 
-    // The AR the comparison below the chart is set to.
-    const pin = el('g');
-    const px = Math.round(x(state.cmp.ar)) + 0.5;
-    pin.append(el('line', { x1: px, x2: px, y1: m.t - 4, y2: m.t + ph, class: 'pin' }));
-    pin.append(el('text', { x: px, y: m.t - 9, 'text-anchor': px > m.l + pw - 60 ? 'end' : px < m.l + 60 ? 'start' : 'middle', class: 'pin-label' }, `compared at ${nf(state.cmp.ar)}`));
-    svg.append(pin);
-
     // The old lines go under the measured ones.
     if (mult && state.old) {
       for (const p of vis) {
@@ -209,11 +200,14 @@
       const g = el('g', { class: 'series', 'data-id': p.id, style: `--c:${p.color}` });
       const pts = p.pts.map(([ar, v]) => [x(ar), y(mult ? v : (v / oldAt(p, ar) - 1) * 100)]);
       g.append(el('path', { d: 'M' + pts.map(q => `${q[0].toFixed(1)},${q[1].toFixed(1)}`).join('L'), class: 'measured' }));
-      if (state.readings) for (const q of pts.slice(1, -1)) g.append(el('circle', { cx: q[0].toFixed(1), cy: q[1].toFixed(1), r: 3, class: 'reading' }));
+      // A dot at every reading, so it shows where the curve was measured and where it is only joined up. The first
+      // point is the soft cap, which every profession shares and which isn't a reading.
+      for (const q of pts.slice(1)) {
+        g.append(el('circle', { cx: q[0].toFixed(1), cy: q[1].toFixed(1), r: narrow ? 2.2 : 3, class: narrow ? 'reading small' : 'reading' }));
+      }
       const end = pts[pts.length - 1];
-      g.append(el('circle', { cx: end[0].toFixed(1), cy: end[1].toFixed(1), r: 4.5, class: 'end' }));
       svg.append(g);
-      labels.push({ p, x: end[0] + 10, y: end[1] + 4, w: p.name.length * 7.2 });
+      labels.push({ p, x: end[0] + 9, y: end[1] + 4, w: p.name.length * 7.2 });
     }
     // Names at the line ends, where there is room for them. Two that would overlap are moved apart.
     if (!narrow) {
@@ -247,7 +241,6 @@
     hit.onpointermove = e => { state.hover = arAt(e); showTip(); };
     hit.onpointerdown = e => { state.hover = arAt(e); showTip(); };
     hit.onpointerleave = e => { if (e.pointerType === 'mouse') { state.hover = null; showTip(); } };
-    hit.onclick = e => setCompareAr(arAt(e));
     drawHover();
   }
 
@@ -275,7 +268,7 @@
     drawHover();
     const docked = getComputedStyle(tip).position === 'static';
     const ar = state.hover;
-    plot.setAttribute('aria-valuenow', ar ?? state.cmp.ar);
+    plot.setAttribute('aria-valuenow', ar ?? middleAr());
     if (ar == null) {
       plot.removeAttribute('aria-valuetext');
       tip.hidden = !docked;
@@ -316,13 +309,13 @@
     } else tip.style.transform = '';
   }
 
-  // Arrow keys read along the chart, as the pointer does; Enter sets the comparison there.
+  // Arrow keys read along the chart, as the pointer does, starting from the middle of it.
+  const middleAr = () => Math.round((xMin + xMax) / 100) * 50;
   function onKey(e) {
     const move = { ArrowLeft: -10, ArrowRight: 10, PageDown: -100, PageUp: 100 }[e.key];
-    if (move) state.hover = Math.max(xMin, Math.min(xMax, (state.hover ?? state.cmp.ar) + move * (e.shiftKey ? 10 : 1)));
+    if (move) state.hover = Math.max(xMin, Math.min(xMax, (state.hover ?? middleAr()) + move * (e.shiftKey ? 10 : 1)));
     else if (e.key === 'Home') state.hover = xMin;
     else if (e.key === 'End') state.hover = xMax;
-    else if (e.key === 'Enter' && state.hover != null) { setCompareAr(state.hover); return; }
     else if (e.key === 'Escape') state.hover = null;
     else return;
     e.preventDefault();
@@ -354,7 +347,6 @@
   function setCompareAr(ar, from) {
     state.cmp.ar = Math.round(Math.max(xMin, Math.min(xMax, ar)));
     for (const id of ['cmp-ar', 'cmp-slider']) if ($(id) !== from) $(id).value = state.cmp.ar;
-    if (geom) draw();
     showCompare();
   }
 

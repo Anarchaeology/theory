@@ -37,7 +37,6 @@
         </div>
         <div class="opts">
           <label class="opt"><input type="checkbox" id="opt-old" checked> Old lines</label>
-          <label class="opt"><input type="checkbox" id="opt-readings"> Readings</label>
         </div>
       </div>
       <div class="chart-title">
@@ -46,44 +45,14 @@
           <span><i></i>measured in game</span>
           <span id="key-old"><i class="dashed"></i>the old line</span>
           <span id="key-zero" hidden>0% is the old line</span>
-          <span><i class="dot"></i>last reading</span>
+          <span><i class="dot"></i>a reading</span>
         </p>
       </div>
       <div class="plot" id="plot" tabindex="0" role="slider" aria-label="Attack rating to read the curves at">
         <div class="tip" id="tip" hidden></div>
       </div>
-      <p class="caption">Each curve joins its readings point to point and stops at its last reading. Nothing past that point has been measured. Click the chart to set the comparison below to that AR.</p>
+      <p class="caption">Each dot is a reading. Each curve joins its readings point to point and stops at the last one. Nothing past that point has been measured.</p>
     </div>
-  </section>
-
-  <section>
-    <h2>Compare two professions</h2>
-    <div class="card compare">
-      <div class="pickers">
-        <label>Compare <select id="cmp-a"></select></label>
-        <label>with <select id="cmp-b"></select></label>
-        <label>at AR <input type="number" id="cmp-ar" step="1" inputmode="numeric"></label>
-        <input type="range" id="cmp-slider" step="1" aria-label="AR to compare at">
-      </div>
-      <div class="scroll">
-        <table class="tbl">
-          <thead><tr id="cmp-head"></tr></thead>
-          <tbody id="cmp-body"></tbody>
-        </table>
-      </div>
-      <p class="verdict" id="cmp-verdict" aria-live="polite"></p>
-    </div>
-  </section>
-
-  <section>
-    <h2>What the readings show</h2>
-    <ul class="points">
-      <li><b>The Doctor is above the Bureaucrat, not below.</b> The old numbers give Doctors the lowest figure of all and put the Bureaucrat above them. In game the Doctor's multiplier is above the Bureaucrat's at every AR past 1000, and by AR 2,500 it is above the Trader's too. This was checked with one weapon on both: at about AR 2,075 the Doctor's crit minus normal hit read 2,772 and the Bureaucrat's 2,661, where the old numbers predict 2,649 and 2,707.</li>
-      <li><b>The Keeper and the Fixer climb in stairs</b>, steep stretches between flatter ones. Their old numbers, 0.34 and 0.30, are about their averages. But past about AR 2,450 the next bit of AR is worth about 0.2 per 400 AR for both, well under either.</li>
-      <li><b>The Doctor climbs far faster than its old number says</b>: about 0.18 per 400 AR on average, against 0.10. At AR 2,599 it is 8% above its old line.</li>
-      <li><b>The Trader stays on its old line</b>, within 0.7% of it the whole way.</li>
-      <li><b>The Bureaucrat climbs in two straight stretches</b> with a knee near AR 1,350: 0.16 per 400 AR up to it and 0.08 after. At AR 2,500 it is 2.9% under its old line.</li>
-    </ul>
   </section>
 
   <section>
@@ -115,6 +84,36 @@
         </table>
       </div>
     </details>
+  </section>
+
+  <section>
+    <h2>What the readings show</h2>
+    <ul class="points">
+      <li><b>The Doctor is above the Bureaucrat, not below.</b> The old numbers give Doctors the lowest figure of all and put the Bureaucrat above them. In game the Doctor's multiplier is above the Bureaucrat's at every AR past 1000, and by AR 2,500 it is above the Trader's too. This was checked with one weapon on both: at about AR 2,075 the Doctor's crit minus normal hit read 2,772 and the Bureaucrat's 2,661, where the old numbers predict 2,649 and 2,707.</li>
+      <li><b>The Keeper and the Fixer climb in stairs</b>, steep stretches between flatter ones. Their old numbers, 0.34 and 0.30, are about their averages. But past about AR 2,450 the next bit of AR is worth about 0.2 per 400 AR for both, well under either.</li>
+      <li><b>The Doctor climbs far faster than its old number says</b>: about 0.18 per 400 AR on average, against 0.10. At AR 2,599 it is 8% above its old line.</li>
+      <li><b>The Trader stays on its old line</b>, within 0.7% of it the whole way.</li>
+      <li><b>The Bureaucrat climbs in two straight stretches</b> with a knee near AR 1,350: 0.16 per 400 AR up to it and 0.08 after. At AR 2,500 it is 2.9% under its old line.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Compare two professions</h2>
+    <div class="card compare">
+      <div class="pickers">
+        <label>Compare <select id="cmp-a"></select></label>
+        <label>with <select id="cmp-b"></select></label>
+        <label>at AR <input type="number" id="cmp-ar" step="1" inputmode="numeric"></label>
+        <input type="range" id="cmp-slider" step="1" aria-label="AR to compare at">
+      </div>
+      <div class="scroll">
+        <table class="tbl">
+          <thead><tr id="cmp-head"></tr></thead>
+          <tbody id="cmp-body"></tbody>
+        </table>
+      </div>
+      <p class="verdict" id="cmp-verdict" aria-live="polite"></p>
+    </div>
   </section>
 
   <section>

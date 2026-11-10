@@ -22,7 +22,7 @@
   <div class="wrap">
     <p class="crumbs"><a class="home" href="https://anarchaeology.github.io/"><img src="https://anarchaeology.github.io/logo.png" alt="" width="28" height="28">Anarchaeology</a> <span>/</span> <a href="./">Theory</a></p>
     <h1>Hit chance</h1>
-    <p class="lede">These are the hit chances measured in game, next to the old formula in common use.</p>
+    <p class="lede">These are the hit chances measured in game, next to the 1/<span class="sqrt">√<span>2</span></span> formula in common use.</p>
   </div>
 </header>
 
@@ -39,7 +39,7 @@
           <button type="button" data-view="gap" aria-pressed="false">Gap from the formula</button>
         </div>
         <div class="opts">
-          <label class="opt"><input type="checkbox" id="opt-old" checked> Old formula</label>
+          <label class="opt"><input type="checkbox" id="opt-other" checked> <span>1/<span class="sqrt">√<span>2</span></span> formula</span></label>
         </div>
       </div>
       <div class="chart-title">
@@ -47,7 +47,7 @@
         <p class="linekeys">
           <span id="key-formula"><i></i>the measured formula</span>
           <span id="key-zero" hidden>0 is the measured formula</span>
-          <span id="key-old"><i class="dashed"></i>the old formula</span>
+          <span id="key-other"><i class="dashed"></i><span>the 1/<span class="sqrt">√<span>2</span></span> formula</span></span>
           <span><i class="dot"></i>a result, with its 95% range</span>
         </p>
       </div>
@@ -66,7 +66,7 @@
         <tbody id="by-ratio"></tbody>
       </table>
     </div>
-    <p class="prose">The hit chance by the measured formula at each of the defender's slider settings, with the old formula's figure beside it.</p>
+    <p class="prose">The hit chance by the measured formula at each of the defender's slider settings, with the 1/<span class="sqrt">√<span>2</span></span> formula's figure beside it.</p>
     <details class="card">
       <summary>Every result</summary>
       <div class="scroll">
@@ -83,7 +83,7 @@
               <th>95% range</th>
               <th>Measured formula</th>
               <th>Gap, in points</th>
-              <th>Old formula</th>
+              <th>1/<span class="sqrt">√<span>2</span></span> formula</th>
             </tr>
           </thead>
           <tbody id="results"></tbody>
@@ -98,7 +98,7 @@
       <li><b>Only AR over defense counts.</b> Against a full-defensive defender, AR equal to the defense lands half the swings and AR at twice the defense lands them all. The same held at defenses from 238 to 1,520.</li>
       <li><b>The defender's slider adds a flat amount</b>: nothing at full defensive, 20 points at neutral and 40 at full aggressive. The attacker's own slider changes nothing.</li>
       <li><b>So the weakest attacker still lands what the slider gives.</b> With AR at 0.13 times the defense, 4% of swings landed on a full-defensive defender, 25% at neutral and 46% at full aggressive.</li>
-      <li><b>The old formula is a straight line.</b> It is close in the middle and off at both ends. Against a full-defensive defender it reaches 100% at 1.7 times the defense, where the game takes twice the defense: at 1.8 times, 94% of swings landed. At 0.13 times the defense on a neutral defender it says 9%, where 25% landed.</li>
+      <li><b>The 1/<span class="sqrt">√<span>2</span></span> formula is a straight line.</b> It is close in the middle and off at both ends. Against a full-defensive defender it reaches 100% at 1.7 times the defense, where the game takes twice the defense: at 1.8 times, 94% of swings landed. At 0.13 times the defense on a neutral defender it says 9%, where 25% landed.</li>
       <li><b>Add-all counts the same as skill.</b> With one character taking half its AR from add-all-offense and most of its defense from add-all-defense, AR equal to the defense still landed 49.8% and 48.8% at full defensive and 88.7% and 92.1% at full aggressive. The formula says 50% and 90%.</li>
       <li><b>Crit doesn't move the hit chance.</b> Raising one character's Critical Increase from 2 to 21 left AR equal to the defense at 51.0% and 49.6%.</li>
     </ul>
@@ -122,7 +122,7 @@
     <h2>About these numbers</h2>
     <p class="prose"><b>The measured formula.</b> The result is held between 0% and 100%. The slider is the defender's, from −100 at full defensive to +100 at full aggressive. <span class="formula">hit chance = 50% + (AR − Def) ÷ (Def + |AR − Def|) + (slider + 100) ÷ 500</span></p>
     <p class="prose"><b>AR and defense.</b> AR is weapon skill plus add-all-offense. The weapon's max beneficial skill doesn't cap it here, as it does for damage. Defense is the evade skill the attack checks plus add-all-defense.</p>
-    <p class="prose"><b>The old formula.</b> The one in common use before these results, also held between 0% and 100%. <span class="formula">hit chance = AR ÷ (√2 × Def) + slider ÷ 500</span></p>
+    <p class="prose"><b>The 1/<span class="sqrt">√<span>2</span></span> formula.</b> The one in common use, also held between 0% and 100%. <span class="formula">hit chance = 1/<span class="sqrt">√<span>2</span></span> × AR ÷ Def + slider ÷ 500</span></p>
     <p class="prose"><b>The results.</b> Two players swung at each other with AR from 0.13 to 2 times the defense, at three of the defender's slider settings. The measured formula has no fitted numbers in it. Half the results are within 0.8 points of it and none is more than 2.5 off. That is a little more scatter than chance alone gives: one of the two characters landed about 0.7 points more than the other at the same AR, defense and slider, and nothing measured so far explains it.</p>
     <p class="prose"><b>The data.</b> The results on this page are in one file: <a href="data/hit-chance.json">hit-chance.json</a>.</p>
   </section>

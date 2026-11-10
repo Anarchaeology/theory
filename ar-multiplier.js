@@ -382,20 +382,28 @@
     // Past a profession's last reading its figure is the curve carried on, not a reading: those get an asterisk, and
     // a line under the comparison says what it means.
     const past = [a, b].filter((p, i, both) => ar > p.last && both.indexOf(p) === i);
-    const star = on => (on ? '*' : '');
+    // The asterisk is raised, and in the table it hangs to the right of its number, so the digits in the row below
+    // still line up under it (theory.css, .star).
+    const star = () => html('sup', 'star', '*');
+    const figure = (text, starred) => {
+      const td = html('td');
+      if (!starred) { td.textContent = text; return td; }
+      const number = html('span', 'starred', text);
+      number.append(star());
+      td.append(number);
+      return td;
+    };
     const row = (label, va, vb, starA, starB) => {
       const tr = html('tr');
-      tr.append(html('th', '', label), html('td', '', f3(va) + star(starA)), html('td', '', f3(vb) + star(starB)),
-        html('td', '', pct((va / vb - 1) * 100) + star(starA || starB)));
+      tr.append(html('th', '', label), figure(f3(va), starA), figure(f3(vb), starB), figure(pct((va / vb - 1) * 100), starA || starB));
       return tr;
     };
     $('cmp-head').replaceChildren(html('th', '', `At AR ${nf(ar)}`), html('th', '', a.name), html('th', '', b.name), html('th', '', `${a.name} against ${b.name}`));
     $('cmp-body').replaceChildren(row('Measured in game', ma, mb, ar > a.last, ar > b.last), row('The old numbers', sa, sb));
     const note = $('cmp-note');
     note.hidden = !past.length;
-    note.textContent = past.length
-      ? `* Past ${past.map(p => `the ${p.name}’s last reading (AR ${nf(p.last)})`).join(' and ')}, the curve is carried on in a straight line from its last two readings.`
-      : '';
+    note.replaceChildren();
+    if (past.length) note.append(star(), ` Past ${past.map(p => `the ${p.name}’s last reading (AR ${nf(p.last)})`).join(' and ')}, the curve is carried on in a straight line from its last two readings.`);
 
     const out = $('cmp-verdict');
     out.replaceChildren();
@@ -405,7 +413,8 @@
     const amount = g => Math.abs(g) < 0.05 ? 'the same' : `${Math.abs(g).toFixed(1)}% ${g > 0 ? 'higher' : 'lower'}`;
     const word = g => Math.abs(g) < 0.05 ? 'the same as' : `${amount(g)} than`;
     const gap = (ma / mb - 1) * 100;
-    out.append('Measured, the ', html('b', '', a.name), '’s multiplier is ', html('b', '', word(gap)), ' the ', html('b', '', b.name), `’s at this AR.${star(past.length)}`);
+    out.append('Measured, the ', html('b', '', a.name), '’s multiplier is ', html('b', '', word(gap)), ' the ', html('b', '', b.name), '’s at this AR.');
+    if (past.length) out.append(star());
     const flipped = Math.abs(gap) >= 0.05 && Math.abs(oldGap) >= 0.05 && Math.sign(gap) !== Math.sign(oldGap);
     out.append(html('span', 'sub', `By the old numbers it would be ${amount(oldGap)}${flipped ? ', the other way round' : ''}.`));
   }

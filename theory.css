@@ -145,6 +145,11 @@ input[type="range"] { accent-color: var(--notum); flex: 1 1 12rem; min-width: 8r
 .verdict b { font-weight: 600; }
 .verdict .sub { display: block; color: var(--muted); font-size: 0.9rem; margin-top: 0.2rem; }
 .compare .note { color: var(--muted); font-size: 0.85rem; max-width: 80ch; }
+/* The mark on a figure past the last reading: a raised asterisk. Beside a number in the table it hangs out to the
+   right and takes no room, so the digits above and below still line up. */
+.star { font: 600 0.8em/0 var(--body); vertical-align: super; margin-left: 1px; }
+.starred { position: relative; }
+.starred .star { position: absolute; left: 100%; top: -0.1em; line-height: 1; vertical-align: baseline; }
 .verdict .big { font: 600 1.5rem var(--display); margin-right: 0.3rem; }
 .pickers label.wide { flex: 0 1 24rem; }
 .formula { display: block; margin-top: 0.3rem; font: 0.9rem var(--mono); color: var(--ink); }

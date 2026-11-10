@@ -144,6 +144,7 @@ input[type="range"] { accent-color: var(--notum); flex: 1 1 12rem; min-width: 8r
 .verdict { font-size: 1rem; max-width: 70ch; }
 .verdict b { font-weight: 600; }
 .verdict .sub { display: block; color: var(--muted); font-size: 0.9rem; margin-top: 0.2rem; }
+.compare .note { color: var(--muted); font-size: 0.85rem; max-width: 80ch; }
 .verdict .big { font: 600 1.5rem var(--display); margin-right: 0.3rem; }
 .pickers label.wide { flex: 0 1 24rem; }
 .formula { display: block; margin-top: 0.3rem; font: 0.9rem var(--mono); color: var(--ink); }

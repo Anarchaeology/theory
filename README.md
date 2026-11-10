@@ -57,6 +57,10 @@ else, so the page shows the same curves the app uses. Needs the .NET 10 SDK.
 - `points`: the measured curve as `[AR, multiplier]` pairs in AR order, joined point to point from the soft cap. Empty
   for a profession that hasn't been measured; the page lists it with its old number and doesn't draw it.
 
+The comparison under the chart runs to AR 3,500, past where the readings stop. Past a profession's last reading it
+carries the curve on along the line through its last two readings, as the theorycrafter does (`curveAt` in
+`ar-multiplier.js`), and marks those figures with an asterisk. The chart and the tables stop at the last reading.
+
 More readings, or a newly measured profession, are a change to this file only: the chart, the buttons, the comparison
 and the tables are all built from it. The words under "What the readings show" are written by hand in
 `ar-multiplier.html`.

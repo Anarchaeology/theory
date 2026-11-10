@@ -11,8 +11,10 @@ Plain static files, no build step.
 | `index.html` | the section's front page: one row per page |
 | `ar-multiplier.html`, `ar-multiplier.js` | "Attack rating and damage": every measured profession's damage multiplier against AR on one chart, with the old number's straight line for each |
 | `data/ar-multiplier.json` | the one data file behind that page |
+| `hit-chance.html`, `hit-chance.js` | "Hit chance": every result against AR over defense, on the measured formula's curve for each of the defender's slider settings, with the old formula's line for each, and a calculator |
+| `data/hit-chance.json` | the one data file behind that page |
 | `theory.css` | the look, shared by every page here (the gallery's colors and typefaces) |
-| `tools/ExportArMultiplier.cs` | writes the data file from the theorycrafter's tables |
+| `tools/ExportArMultiplier.cs`, `tools/ExportHitChance.cs` | write the two data files from a theorycrafter checkout |
 
 To look at the pages on your own PC, serve this folder with any static web server (the chart page loads its data
 file, which a page opened straight from disk can't do):
@@ -23,9 +25,11 @@ python -m http.server 8138
 
 then open http://localhost:8138/. The logo and icon come from the live gallery.
 
-## The data file
+## The data files
 
-`data/ar-multiplier.json` is written by a tool and never edited by hand:
+Both are written by a tool and never edited by hand.
+
+### `data/ar-multiplier.json`
 
 ```
 cd tools
@@ -58,6 +62,33 @@ and the tables are all built from it. The words under "What the readings show" a
 `ar-multiplier.html`.
 
 The file holds results only. Nothing about the tests (characters, weapons, logs) is in it or on the page.
+
+### `data/hit-chance.json`
+
+```
+cd tools
+dotnet run ExportHitChance.cs -- "PATH\TO\ao-theorycrafter" "..\data\hit-chance.json"
+```
+
+It reads the hit lab's results (`HitData/curve/steps.tsv`) and keeps only the numbers.
+
+```
+{
+  "updated": "2026-11-10",
+  "sourceCommit": "64081e9",
+  "results": [
+    { "ar": 133, "def": 1000, "slider": 0, "attackerSlider": 0, "swings": 2346, "landed": 588 },
+    ...
+  ]
+}
+```
+
+- One entry per result: an attacker's AR against a defender's defense, with the defender's slider (`slider`, from
+  -100 at full defensive to 100 at full aggressive) and the attacker's own, and how many swings were made and landed.
+- The page works out the rest: AR over defense, the share that landed and its 95% range.
+
+More results are a change to this file only. The two formulas the page draws, the measured one and the old one, are
+written in `hit-chance.js`; the slider settings' names and colors are there too (`SLIDERS`).
 
 ## Chart colors
 

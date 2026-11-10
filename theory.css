@@ -83,6 +83,9 @@ section > h2 { font-size: 1.3rem; }
 .chips.picks .chip[aria-pressed="true"] { border-color: var(--notum); box-shadow: inset 0 -2px 0 var(--notum); }
 .chips.picks.has-picks .chip[aria-pressed="false"] { color: var(--muted); background: transparent; }
 .chips.picks.has-picks .chip[aria-pressed="false"] .key { background: transparent; box-shadow: inset 0 0 0 1px var(--muted); }
+/* The button pointed at, while what it stands for is on the chart because of the pointing. */
+.chips.picks.has-picks .chip.previewing { color: var(--ink); }
+.chips.picks.has-picks .chip.previewing .key { background: var(--c); box-shadow: none; }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
 .seg button { font: inherit; font-size: 0.85rem; padding: 0.3rem 0.7rem; background: transparent; color: var(--muted); border: 0; cursor: pointer; }
 .seg button + button { border-left: 1px solid var(--line); }
@@ -106,8 +109,6 @@ section > h2 { font-size: 1.3rem; }
 .plot .axisline { stroke: var(--axis); stroke-width: 1; }
 .plot .tick { fill: var(--muted); font: 11px var(--mono); font-variant-numeric: tabular-nums; }
 .plot .axis-title { fill: var(--muted); font: 12px var(--body); }
-.plot .series { transition: opacity 0.12s; }
-.plot .series.dim { opacity: 0.16; }
 .plot .measured { fill: none; stroke: var(--c); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
 .plot .old, .plot .other { fill: none; stroke: var(--c); stroke-width: 1.5; stroke-dasharray: 5 4; opacity: 0.7; }
 .plot .reading { fill: var(--c); stroke: var(--surface); stroke-width: 1.5; }
@@ -179,7 +180,4 @@ details.card[open] > summary { border-bottom: 1px solid var(--line); }
   .tip { position: static; box-shadow: none; border-width: 1px 0 0; border-radius: 0; background: transparent; min-height: 9.5rem; padding: 0.6rem 0.9rem; }
   .controls { gap: 0.6rem; }
   .tbl th, .tbl td { padding: 0.4rem 0.6rem; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .plot .series { transition: none; }
 }

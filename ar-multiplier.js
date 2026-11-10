@@ -33,9 +33,9 @@
   let cap, measured = [], unmeasured = [], xMin = 1000, xMax = 3000, geom = null;
   const state = { picked: new Set(), preview: null, view: 'mult', old: true, hover: null, cmp: { a: null, b: null, ar: 2075 } };
 
-  // What the chart shows: one profession alone while its button is pointed at; otherwise the professions picked, or
-  // every one of them while none is picked.
-  const isShown = p => (state.preview ? p.id === state.preview : !state.picked.size || state.picked.has(p.id));
+  // What the chart shows: the professions picked, plus the one whose button is pointed at, so pointing shows what
+  // picking it would. With none picked and none pointed at, that is every profession.
+  const isShown = p => state.picked.has(p.id) || p.id === state.preview || (!state.picked.size && !state.preview);
 
   // The old number's straight line, the measured curve (null outside what was measured) and the gap between them in percent.
   const oldAt = (p, ar) => ar <= cap.ar ? ar / cap.arPerPoint + 1 : cap.multiplier + (ar - cap.ar) / cap.arPerPoint * p.old;
@@ -94,25 +94,29 @@
 
   // ---- Controls ----------------------------------------------------------------------------------------------------
 
-  // The profession buttons. Pointing at one shows that profession alone for as long as the pointer stays on it.
-  // Clicking picks: the first click leaves that profession as the only one shown, each click after that adds a
-  // profession or takes one off, and taking the last one off brings every profession back.
+  // The profession buttons. Clicking picks: the first click leaves that profession as the only one shown, each click
+  // after that adds a profession or takes one off, and taking the last one off brings every profession back.
+  // Pointing at a button shows the chart as it would be with that profession picked too: alone while none is
+  // picked, beside the picked ones otherwise.
   function buildChips() {
     const box = $('chips');
-    const preview = id => { if (state.preview !== id) { state.preview = id; draw(); showTip(); } };
+    // The button pointed at lights up with its color while its curve is on the chart because of it.
+    const mark = id => { for (const c of box.children) c.classList.toggle('previewing', id != null && c.dataset.id === id); };
+    const preview = id => { if (state.preview !== id) { state.preview = id; mark(id); draw(); showTip(); } };
     for (const p of measured) {
       const b = html('button', 'chip');
       b.type = 'button';
       b.style.setProperty('--c', p.color);
+      b.dataset.id = p.id;
       b.setAttribute('aria-pressed', 'false');
       b.append(html('span', 'key'), html('span', '', p.name));
       b.onclick = () => {
         state.picked.has(p.id) ? state.picked.delete(p.id) : state.picked.add(p.id);
         b.setAttribute('aria-pressed', String(state.picked.has(p.id)));
         box.classList.toggle('has-picks', state.picked.size > 0);
-        // What the click did shows at once: the pointer is still on the button, so the one-profession view is put
-        // away until the pointer next comes onto a button.
-        state.preview = null;
+        // What the click did shows at once: the pointer is still on the button, and it would otherwise keep a
+        // profession on the chart that the click has just taken off. Pointing counts again from the next button.
+        state.preview = null; mark(null);
         draw(); showTip();
       };
       // A touch has no pointing before the tap, and a click moves focus without the keyboard having asked for it.
@@ -153,9 +157,9 @@
     const vis = measured.filter(isShown);
     const mult = state.view === 'mult';
 
-    // Y fits the professions picked, so the lower curves can be looked at closely with the upper ones off; with none
-    // picked it fits them all. Pointing at a button doesn't move the axis, unless that profession isn't among the
-    // ones picked and has to be made room for.
+    // Y fits the professions picked, and the one pointed at with them, so the lower curves can be looked at closely
+    // with the upper ones off. With none picked it fits them all, and stays put as the pointer moves along the
+    // buttons, so each profession is seen at the same scale.
     const forFit = state.picked.size ? measured.filter(p => state.picked.has(p.id) || p.id === state.preview) : measured;
     let lo, hi, step;
     if (mult) {

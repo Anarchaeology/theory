@@ -48,7 +48,11 @@
   }
 
   let series = [], results = [], xMax = 2.2, geom = null;
-  const state = { on: new Set(), view: 'hit', other: true, hover: null };
+  const state = { picked: new Set(), preview: null, view: 'hit', other: true, hover: null };
+
+  // What the chart shows: the slider settings picked, plus the one whose button is pointed at, so pointing shows
+  // what picking it would. With none picked and none pointed at, that is every setting.
+  const isShown = s => state.picked.has(s.id) || s.id === state.preview || (!state.picked.size && !state.preview);
 
   fetch('data/hit-chance.json')
     .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
@@ -71,7 +75,6 @@
       color: SLIDERS[v] ? `var(--s-${SLIDERS[v].color})` : 'var(--muted)',
       results: results.filter(r => r.slider === v),
     }));
-    for (const s of series) state.on.add(s.id);
     xMax = Math.ceil((Math.max(...results.map(r => r.ratio)) + 0.15) * 10) / 10;
 
     buildChips();
@@ -94,23 +97,36 @@
 
   // ---- Controls ----------------------------------------------------------------------------------------------------
 
+  // The slider buttons. Clicking picks: the first click leaves that setting as the only one shown, each click after
+  // that adds a setting or takes one off, and taking the last one off brings every setting back. Pointing at a
+  // button shows the chart as it would be with that setting picked too: alone while none is picked, beside the
+  // picked ones otherwise.
   function buildChips() {
     const box = $('chips');
+    // The button pointed at lights up with its color while its curve is on the chart because of it.
+    const mark = id => { for (const c of box.children) c.classList.toggle('previewing', id != null && c.dataset.id === id); };
+    const preview = id => { if (state.preview !== id) { state.preview = id; mark(id); draw(); showTip(); } };
     for (const s of series) {
       const b = html('button', 'chip');
       b.type = 'button';
       b.style.setProperty('--c', s.color);
-      b.setAttribute('aria-pressed', 'true');
+      b.dataset.id = s.id;
+      b.setAttribute('aria-pressed', 'false');
       b.append(html('span', 'key'), html('span', '', s.name));
       b.onclick = () => {
-        state.on.has(s.id) ? state.on.delete(s.id) : state.on.add(s.id);
-        b.setAttribute('aria-pressed', String(state.on.has(s.id)));
+        state.picked.has(s.id) ? state.picked.delete(s.id) : state.picked.add(s.id);
+        b.setAttribute('aria-pressed', String(state.picked.has(s.id)));
+        box.classList.toggle('has-picks', state.picked.size > 0);
+        // What the click did shows at once: the pointer is still on the button, and it would otherwise keep a
+        // setting on the chart that the click has just taken off. Pointing counts again from the next button.
+        state.preview = null; mark(null);
         draw(); showTip();
       };
-      // Pointing at a setting's button picks its curve out of the rest.
-      const focus = on => () => highlight(on && state.on.has(s.id) ? s.id : null);
-      b.onpointerenter = focus(true); b.onpointerleave = focus(false);
-      b.onfocus = focus(true); b.onblur = focus(false);
+      // A touch has no pointing before the tap, and a click moves focus without the keyboard having asked for it.
+      b.onpointerenter = e => { if (e.pointerType === 'mouse') preview(s.id); };
+      b.onpointerleave = () => preview(null);
+      b.onfocus = () => { if (b.matches(':focus-visible')) preview(s.id); };
+      b.onblur = () => preview(null);
       box.append(b);
     }
   }
@@ -129,10 +145,6 @@
     $('opt-other').onchange = e => { state.other = e.target.checked; draw(); showTip(); };
   }
 
-  function highlight(id) {
-    for (const g of document.querySelectorAll('#plot .series')) g.classList.toggle('dim', id != null && g.dataset.id !== id);
-  }
-
   // ---- The chart ---------------------------------------------------------------------------------------------------
 
   function draw() {
@@ -141,13 +153,14 @@
     const H = Math.round(Math.max(290, Math.min(470, W * 0.54)));
     const m = { t: 24, r: narrow ? 14 : 22, b: 42, l: 46 };
     const pw = W - m.l - m.r, ph = H - m.t - m.b;
-    const vis = series.filter(s => state.on.has(s.id));
+    const vis = series.filter(isShown);
     const hit = state.view === 'hit';
 
-    // Y: the whole 0 to 100% for hit chance; for the gap, far enough either way to hold every result and its range.
+    // Y: the whole 0 to 100% for hit chance; for the gap, far enough either way to hold every result and its range
+    // among the settings picked (and the one pointed at with them), or among them all while none is picked.
     let lo = 0, hi = 100, step = 20;
     if (!hit) {
-      const reach = Math.max(4, ...(vis.length ? vis : series).flatMap(s => s.results.map(r => Math.max(r.hi - r.fit, r.fit - r.lo) * 100)));
+      const reach = Math.max(4, ...(state.picked.size ? vis : series).flatMap(s => s.results.map(r => Math.max(r.hi - r.fit, r.fit - r.lo) * 100)));
       step = reach > 8 ? 4 : 2;
       hi = Math.ceil(reach / step) * step; lo = -hi;
     }
@@ -211,7 +224,6 @@
         svg.append(g);
       }
     }
-    if (!vis.length) svg.append(el('text', { x: m.l + pw / 2, y: m.t + ph / 2, 'text-anchor': 'middle', class: 'empty' }, 'Switch a slider setting on above.'));
 
     svg.append(el('g', { id: 'hover' }));
     const area = el('rect', { x: m.l, y: m.t - 6, width: pw, height: ph + 12, class: 'hit' });
@@ -231,7 +243,7 @@
   }
 
   const describe = vis => `${state.view === 'hit' ? 'Hit chance' : 'Gap between each result and the measured formula'} against AR over defense from 0 to ${times(xMax)}, with the defender’s slider at ${
-    vis.length ? vis.map(s => s.name.toLowerCase()).join(', ') : 'no setting'}. The tables below the chart give the same numbers.`;
+    vis.map(s => s.name.toLowerCase()).join(', ')}. The tables below the chart give the same numbers.`;
 
   function drawHover() {
     const g = document.getElementById('hover');
@@ -242,7 +254,7 @@
     g.append(el('line', { x1: hx, x2: hx, y1: m.t, y2: m.t + ph, class: 'cross' }));
     if (state.view !== 'hit') return;
     for (const s of series) {
-      if (state.on.has(s.id)) g.append(el('circle', { cx: x(state.hover), cy: y(formula(state.hover, s.slider) * 100), r: 4.5, class: 'end', style: `--c:${s.color}` }));
+      if (isShown(s)) g.append(el('circle', { cx: x(state.hover), cy: y(formula(state.hover, s.slider) * 100), r: 4.5, class: 'end', style: `--c:${s.color}` }));
     }
   }
 
@@ -262,14 +274,14 @@
     }
     const table = html('table'), spoken = [];
     for (const s of series) {
-      if (!state.on.has(s.id)) continue;
+      if (!isShown(s)) continue;
       const f = formula(ratio, s.slider), o = linearFormula(ratio, s.slider);
       const tr = html('tr');
       tr.append(keyCell('td', s.color), html('td', 'v', pc(f)), html('td', 'n', s.name), html('td', 's', `linear ${pc(o)}`), html('td', 's', points((o - f) * 100)));
       table.append(tr);
       spoken.push(`${s.name} ${pc(f)}, by the linear formula ${pc(o)}`);
     }
-    tip.replaceChildren(html('h3', '', `AR at ${ratio.toFixed(2)} × defense`), spoken.length ? table : html('p', 'hint', 'No slider setting is switched on.'));
+    tip.replaceChildren(html('h3', '', `AR at ${ratio.toFixed(2)} × defense`), table);
     tip.hidden = false;
     plot.setAttribute('aria-valuetext', `AR at ${ratio.toFixed(2)} times the defense: ${spoken.join('; ')}`);
     if (!docked && geom) {

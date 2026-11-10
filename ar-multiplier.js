@@ -121,9 +121,11 @@
       };
       // A touch has no pointing before the tap, and a click moves focus without the keyboard having asked for it.
       b.onpointerenter = e => { if (e.pointerType === 'mouse') preview(p.id); };
-      b.onpointerleave = () => preview(null);
+      // Leaving, or losing focus, only ends the pointing if this button's is the one in force: pressing the mouse on
+      // another button takes focus from the one clicked before, and that must not blank what is being pointed at.
+      b.onpointerleave = () => { if (state.preview === p.id) preview(null); };
       b.onfocus = () => { if (b.matches(':focus-visible')) preview(p.id); };
-      b.onblur = () => preview(null);
+      b.onblur = () => { if (state.preview === p.id && !b.matches(':hover')) preview(null); };
       box.append(b);
     }
   }

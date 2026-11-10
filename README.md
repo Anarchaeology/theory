@@ -1,0 +1,87 @@
+# Anarchaeology: Theory
+
+How Anarchy Online's combat numbers work, measured in game. Meant to be served at
+https://anarchaeology.github.io/theory/, alongside the [Anarchaeology](https://anarchaeology.github.io/) gallery and
+its [forum archive](https://anarchaeology.github.io/forums/).
+
+Plain static files, no build step.
+
+| File | What it is |
+|---|---|
+| `index.html` | the section's front page: one row per page |
+| `ar-multiplier.html`, `ar-multiplier.js` | "Attack rating and damage": every measured profession's damage multiplier against AR on one chart, with the old number's straight line for each |
+| `data/ar-multiplier.json` | the one data file behind that page |
+| `theory.css` | the look, shared by every page here (the gallery's colors and typefaces) |
+| `tools/ExportArMultiplier.cs` | writes the data file from the theorycrafter's tables |
+
+To look at the pages on your own PC, serve this folder with any static web server (the chart page loads its data
+file, which a page opened straight from disk can't do):
+
+```
+python -m http.server 8138
+```
+
+then open http://localhost:8138/. The logo and icon come from the live gallery.
+
+## The data file
+
+`data/ar-multiplier.json` is written by a tool and never edited by hand:
+
+```
+cd tools
+dotnet run ExportArMultiplier.cs -- "PATH\TO\ao-theorycrafter" "..\data\ar-multiplier.json"
+```
+
+It reads two tables from the theorycrafter (`MeasuredArCurves.cs` and `ProfScale` in `DpmCalculator.cs`) and nothing
+else, so the page shows the same curves the app uses. Needs the .NET 10 SDK.
+
+```
+{
+  "updated": "2026-11-10",              the day the file was written
+  "sourceCommit": "64081e9",            the theorycrafter commit the tables were read at
+  "softCap": { "ar": 1000, "multiplier": 3.5, "arPerPoint": 400 },
+  "professions": [
+    { "id": "doctor", "name": "Doctor", "old": 0.10, "points": [[1028, 3.52419], [1128, 3.57258], ...] },
+    { "id": "agent", "name": "Agent", "old": 0.39, "points": [] },
+    ...
+  ]
+}
+```
+
+- `old`: the profession's old number, the figure in common use before these readings: the multiplier's gain per 400 AR
+  past the soft cap, as a straight line. The pages call these "the old numbers".
+- `points`: the measured curve as `[AR, multiplier]` pairs in AR order, joined point to point from the soft cap. Empty
+  for a profession that hasn't been measured; the page lists it with its old number and doesn't draw it.
+
+More readings, or a newly measured profession, are a change to this file only: the chart, the buttons, the comparison
+and the tables are all built from it. The words under "What the readings show" are written by hand in
+`ar-multiplier.html`.
+
+The file holds results only. Nothing about the tests (characters, weapons, logs) is in it or on the page.
+
+## Chart colors
+
+Each profession has one fixed color (`COLOR` in `ar-multiplier.js`, the `--s-*` values in `theory.css`), the same hue
+in the light and the dark theme. A newly measured profession draws in gray until it is given one.
+
+The five in use were picked so that every pair passes the dataviz palette check on the chart's own background
+(colorblind separation of 8 or more, normal-vision separation of 15 or more, 3:1 contrast, lightness band), since any
+two curves can cross:
+
+| | Light, on `#ffffff` | Dark, on `#162024` |
+|---|---|---|
+| Keeper | `#6635a3` | `#8758c9` |
+| Fixer | `#c94779` | `#e05c8c` |
+| Doctor | `#1aa1c9` | `#179fc7` |
+| Trader | `#09672e` | `#0a7e3a` |
+| Bureaucrat | `#b18e15` | `#af8c11` |
+
+```
+node validate_palette.js "#6635a3,#c94779,#1aa1c9,#09672e,#b18e15" --mode light --surface "#ffffff" --pairs all
+node validate_palette.js "#8758c9,#e05c8c,#179fc7,#0a7e3a,#af8c11" --mode dark --surface "#162024" --pairs all
+```
+
+Run both again with the whole list whenever a color is added. About eight colors can be told apart this way; past
+that the chart needs another way to show which curve is which.
+
+Anarchy Online belongs to Funcom. This is a fan site, not affiliated with Funcom.

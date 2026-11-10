@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attack rating and damage - Anarchaeology</title>
+<meta name="description" content="How Anarchy Online's damage multiplier grows with attack rating for each profession, measured in game.">
+<link rel="icon" type="image/png" href="https://anarchaeology.github.io/favicon.png">
+<link rel="apple-touch-icon" href="https://anarchaeology.github.io/logo.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Attack rating and damage">
+<meta property="og:description" content="How Anarchy Online's damage multiplier grows with attack rating for each profession, measured in game.">
+<meta property="og:image" content="https://anarchaeology.github.io/logo.png">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<link rel="stylesheet" href="theory.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <p class="crumbs"><a class="home" href="https://anarchaeology.github.io/"><img src="https://anarchaeology.github.io/logo.png" alt="" width="28" height="28">Anarchaeology</a> <span>/</span> <a href="./">Theory</a></p>
+    <h1>Attack rating and damage</h1>
+    <p class="lede">Damage grows with attack rating (AR) through one multiplier. Past AR 1000 each profession's multiplier climbs at its own pace. These are the curves measured in game so far, next to the old numbers in common use, which give each profession a straight line.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section aria-label="The chart">
+    <div class="card">
+      <div class="controls">
+        <div class="chips" id="chips" role="group" aria-label="Professions shown"></div>
+        <div class="seg" id="view" role="group" aria-label="What the chart shows">
+          <button type="button" data-view="mult" aria-pressed="true">Multiplier</button>
+          <button type="button" data-view="gap" aria-pressed="false">Gap from the old line</button>
+        </div>
+        <div class="opts">
+          <label class="opt"><input type="checkbox" id="opt-old" checked> Old lines</label>
+          <label class="opt"><input type="checkbox" id="opt-readings"> Readings</label>
+        </div>
+      </div>
+      <div class="chart-title">
+        <h2 id="chart-name">Damage multiplier by attack rating</h2>
+        <p class="linekeys">
+          <span><i></i>measured in game</span>
+          <span id="key-old"><i class="dashed"></i>the old line</span>
+          <span id="key-zero" hidden>0% is the old line</span>
+          <span><i class="dot"></i>last reading</span>
+        </p>
+      </div>
+      <div class="plot" id="plot" tabindex="0" role="slider" aria-label="Attack rating to read the curves at">
+        <div class="tip" id="tip" hidden></div>
+      </div>
+      <p class="caption">Each curve joins its readings point to point and stops at its last reading. Nothing past that point has been measured. Click the chart to set the comparison below to that AR.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Compare two professions</h2>
+    <div class="card compare">
+      <div class="pickers">
+        <label>Compare <select id="cmp-a"></select></label>
+        <label>with <select id="cmp-b"></select></label>
+        <label>at AR <input type="number" id="cmp-ar" step="1" inputmode="numeric"></label>
+        <input type="range" id="cmp-slider" step="1" aria-label="AR to compare at">
+      </div>
+      <div class="scroll">
+        <table class="tbl">
+          <thead><tr id="cmp-head"></tr></thead>
+          <tbody id="cmp-body"></tbody>
+        </table>
+      </div>
+      <p class="verdict" id="cmp-verdict" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section>
+    <h2>What the readings show</h2>
+    <ul class="points">
+      <li><b>The Doctor is above the Bureaucrat, not below.</b> The old numbers give Doctors the lowest figure of all and put the Bureaucrat above them. In game the Doctor's multiplier is above the Bureaucrat's at every AR past 1000, and by AR 2,500 it is above the Trader's too. This was checked with one weapon on both: at about AR 2,075 the Doctor's crit minus normal hit read 2,772 and the Bureaucrat's 2,661, where the old numbers predict 2,649 and 2,707.</li>
+      <li><b>The Keeper and the Fixer climb in stairs</b>, steep stretches between flatter ones. Their old numbers, 0.34 and 0.30, are about their averages. But past about AR 2,450 the next bit of AR is worth about 0.2 per 400 AR for both, well under either.</li>
+      <li><b>The Doctor climbs far faster than its old number says</b>: about 0.18 per 400 AR on average, against 0.10. At AR 2,599 it is 8% above its old line.</li>
+      <li><b>The Trader stays on its old line</b>, within 0.7% of it the whole way.</li>
+      <li><b>The Bureaucrat climbs in two straight stretches</b> with a knee near AR 1,350: 0.16 per 400 AR up to it and 0.08 after. At AR 2,500 it is 2.9% under its old line.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>By profession</h2>
+    <div class="card scroll">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Profession</th>
+            <th>Old number</th>
+            <th>Measured average</th>
+            <th>Measured to AR</th>
+            <th>Multiplier there</th>
+            <th>Old line there</th>
+            <th>Gap</th>
+          </tr>
+        </thead>
+        <tbody id="by-prof"></tbody>
+      </table>
+    </div>
+    <p class="prose">Both numbers are what the multiplier gains per 400 AR past AR 1000. The measured average runs from AR 1000 to the profession's last reading.</p>
+    <p class="unmeasured" id="unmeasured"></p>
+    <details class="card">
+      <summary>The measured multiplier every 100 AR</summary>
+      <div class="scroll">
+        <table class="tbl">
+          <thead><tr id="by-ar-head"></tr></thead>
+          <tbody id="by-ar"></tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2>About these numbers</h2>
+    <p class="prose"><b>The multiplier.</b> It multiplies the weapon's damage roll and its crit bonus. Add damage is outside it. Up to AR 1000 it is AR/400 + 1 for every profession, which makes it 3.5 at AR 1000. AR is weapon skill plus add-all-offense, and AR past the weapon's max beneficial skill doesn't count.</p>
+    <p class="prose"><b>The old numbers.</b> These are the figures in common use before these readings: one number per profession for how much the multiplier gains per 400 AR past AR 1000. The Keeper's 0.34 means 400 more AR adds 0.34, where below AR 1000 it would add a full 1. That makes a straight line for each profession, drawn dashed on the chart.</p>
+    <p class="prose"><b>The readings.</b> On a target with enough armor to hold every normal hit to its minimum, a crit minus a normal hit is the weapon's crit bonus times the multiplier, because crits don't roll. So one crit and one normal hit at an AR give the multiplier there. The only error is the game rounding damage to whole points. Each profession was read from about AR 1000 up to the AR shown in the table.</p>
+    <p class="prose"><b>The data.</b> The curves on this page are in one file: <a href="data/ar-multiplier.json">ar-multiplier.json</a>.</p>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <span id="updated"></span>
+  <span>Anarchy Online belongs to Funcom. This is a fan site, not affiliated with Funcom.</span>
+</footer>
+
+<script src="ar-multiplier.js" defer></script>
+</body>
+</html>

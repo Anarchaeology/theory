@@ -1,0 +1,169 @@
+/* The theory section: the gallery's look (same tokens as ../gallery.css) for pages of text, a chart and tables.
+   Dark by default, light when the system asks for it, as on the gallery. */
+:root {
+  --bg: #0e1416;
+  --surface: #162024;
+  --raised: #1d292e;
+  --ink: #e3ebe8;
+  --muted: #94a6a1;
+  --line: #26343a;
+  --notum: #5cc3d3;
+  --amber: #e2a35a;
+  --display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", Consolas, monospace;
+  /* Chart colors, one per profession, the same five hues in both themes. Every pair passes the dataviz palette
+     check (colorblind separation, normal-vision separation, 3:1 against the surface) on --surface: see README.md. */
+  --s-purple: #8758c9;
+  --s-pink: #e05c8c;
+  --s-cyan: #179fc7;
+  --s-green: #0a7e3a;
+  --s-gold: #af8c11;
+  --axis: #3a4c53;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #eef2f1; --surface: #ffffff; --raised: #f6f8f7; --ink: #16201e; --muted: #576562;
+    --line: #cfd9d6; --notum: #1d6676; --amber: #9c5a17;
+    --s-purple: #6635a3; --s-pink: #c94779; --s-cyan: #1aa1c9; --s-green: #09672e; --s-gold: #b18e15;
+    --axis: #9fb0ac;
+    color-scheme: light;
+  }
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 15px/1.55 var(--body); }
+a { color: var(--notum); text-underline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.wrap {
+  max-width: 68rem; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+h1, h2, h3 { font-family: var(--display); font-weight: 600; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+
+/* Header: where you are in the site, then the page's title. */
+.top { padding-block: 1.6rem 1.4rem; }
+.top .wrap { display: grid; gap: 0.7rem; }
+.crumbs { display: flex; align-items: center; gap: 0.5rem; font: 500 0.8rem var(--mono); letter-spacing: 0.04em; color: var(--muted); }
+.crumbs a { color: var(--muted); text-decoration: none; }
+.crumbs a:hover { color: var(--notum); }
+.crumbs .home { display: inline-flex; align-items: center; gap: 0.5rem; }
+.crumbs img { width: 28px; height: 28px; }
+h1 { font-size: clamp(1.7rem, 4vw, 2.4rem); line-height: 1.08; }
+.lede { color: var(--muted); font-size: 1.05rem; max-width: 62ch; }
+
+main { display: grid; gap: 2.2rem; padding-bottom: 2rem; }
+section { display: grid; gap: 0.8rem; min-width: 0; }
+section > h2 { font-size: 1.3rem; }
+.prose { color: var(--muted); max-width: 68ch; }
+.prose b, .points b { color: var(--ink); font-weight: 600; }
+.points { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.5rem; color: var(--muted); max-width: 72ch; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 3px; min-width: 0; }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* Chart card: controls, the plot, a caption. */
+.controls { display: flex; flex-wrap: wrap; gap: 0.7rem 1.4rem; align-items: center; padding: 0.8rem 0.9rem; border-bottom: 1px solid var(--line); }
+.chips { display: flex; flex-wrap: wrap; gap: 0.4rem; flex: 1 1 18rem; }
+.chip { font: inherit; font-size: 0.85rem; color: var(--ink); background: var(--raised); border: 1px solid var(--line); border-radius: 3px;
+  padding: 0.3rem 0.65rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; }
+.chip:hover { border-color: var(--notum); }
+.chip .key { width: 16px; height: 3px; border-radius: 2px; background: var(--c); flex: none; }
+.chip[aria-pressed="false"] { color: var(--muted); background: transparent; }
+.chip[aria-pressed="false"] .key { background: transparent; box-shadow: inset 0 0 0 1px var(--muted); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
+.seg button { font: inherit; font-size: 0.85rem; padding: 0.3rem 0.7rem; background: transparent; color: var(--muted); border: 0; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--raised); color: var(--ink); box-shadow: inset 0 -2px 0 var(--notum); }
+.opts { display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; }
+.opt { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: var(--muted); cursor: pointer; }
+.opt input { accent-color: var(--notum); margin: 0; }
+.opt:has(input:disabled) { opacity: 0.45; cursor: default; }
+
+.chart-title { display: flex; flex-wrap: wrap; gap: 0.2rem 1.2rem; align-items: baseline; padding: 0.8rem 0.9rem 0; }
+.chart-title h2 { font: 600 0.95rem var(--body); }
+.linekeys { display: flex; flex-wrap: wrap; gap: 0.2rem 1rem; font-size: 0.8rem; color: var(--muted); }
+.linekeys span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.linekeys i { width: 22px; height: 0; border-top: 2px solid var(--muted); }
+.linekeys i.dashed { border-top: 2px dashed var(--muted); opacity: 0.8; }
+.linekeys i.dot { width: 8px; height: 8px; border: 0; border-radius: 50%; background: var(--muted); }
+
+.plot { position: relative; padding: 0.2rem 0.3rem 0; outline-offset: -2px; touch-action: pan-y; }
+.plot svg { display: block; width: 100%; overflow: visible; }
+.plot .gridline { stroke: var(--line); stroke-width: 1; }
+.plot .axisline { stroke: var(--axis); stroke-width: 1; }
+.plot .tick { fill: var(--muted); font: 11px var(--mono); font-variant-numeric: tabular-nums; }
+.plot .axis-title { fill: var(--muted); font: 12px var(--body); }
+.plot .series { transition: opacity 0.12s; }
+.plot .series.dim { opacity: 0.16; }
+.plot .measured { fill: none; stroke: var(--c); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.plot .old { fill: none; stroke: var(--c); stroke-width: 1.5; stroke-dasharray: 5 4; opacity: 0.7; }
+.plot .reading { fill: var(--c); stroke: var(--surface); stroke-width: 1.5; }
+.plot .end { fill: var(--c); stroke: var(--surface); stroke-width: 2; }
+.plot .label { fill: var(--ink); font: 600 12px var(--body); paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
+.plot .cross { stroke: var(--ink); stroke-width: 1; opacity: 0.55; }
+.plot .pin { stroke: var(--amber); stroke-width: 1; opacity: 0.8; }
+.plot .pin-label { fill: var(--amber); font: 500 10.5px var(--mono); }
+.plot .empty { fill: var(--muted); font: 14px var(--body); }
+.plot .hit { fill: transparent; cursor: crosshair; }
+
+/* The readout: floats beside the crosshair on wide screens, sits under the chart on phones. */
+.tip { position: absolute; top: 0; left: 0; z-index: 2; pointer-events: none; min-width: 15rem; padding: 0.5rem 0.65rem;
+  background: var(--raised); border: 1px solid var(--axis); border-radius: 3px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); font-size: 0.8rem; }
+.tip h3 { font: 500 0.75rem var(--mono); color: var(--muted); letter-spacing: 0.04em; margin-bottom: 0.3rem; }
+.tip table { border-collapse: collapse; width: 100%; }
+.tip td { padding: 0.1rem 0 0.1rem 0.6rem; white-space: nowrap; }
+.tip td:first-child { padding-left: 0; width: 16px; }
+.tip .k { display: inline-block; width: 14px; height: 3px; border-radius: 2px; background: var(--c); vertical-align: middle; }
+.tip .v { font: 600 0.85rem var(--mono); font-variant-numeric: tabular-nums; color: var(--ink); text-align: right; }
+.tip .n { color: var(--ink); }
+.tip .s { color: var(--muted); font-family: var(--mono); font-size: 0.75rem; font-variant-numeric: tabular-nums; text-align: right; }
+.tip .hint { color: var(--muted); }
+.caption { padding: 0.5rem 0.9rem 0.8rem; color: var(--muted); font-size: 0.85rem; max-width: 80ch; }
+
+/* Compare two professions */
+.compare { padding: 0.9rem; display: grid; gap: 0.9rem; }
+.pickers { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center; }
+.pickers label { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--muted); font-size: 0.85rem; }
+select, input[type="number"] { font: inherit; font-size: 0.9rem; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 3px; padding: 0.3rem 0.5rem; }
+input[type="number"] { width: 5.5rem; font-family: var(--mono); }
+input[type="range"] { accent-color: var(--notum); flex: 1 1 12rem; min-width: 8rem; max-width: 28rem; }
+.verdict { font-size: 1rem; max-width: 70ch; }
+.verdict b { font-weight: 600; }
+.verdict .sub { display: block; color: var(--muted); font-size: 0.9rem; margin-top: 0.2rem; }
+
+/* Tables */
+.scroll { overflow-x: auto; }
+table.tbl { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+.tbl th, .tbl td { padding: 0.45rem 0.9rem; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
+.tbl thead th { font: 500 0.75rem var(--mono); letter-spacing: 0.04em; color: var(--muted); vertical-align: bottom; white-space: normal; }
+.tbl th:first-child, .tbl td:first-child { text-align: left; }
+.tbl tbody tr:last-child td, .tbl tbody tr:last-child th { border-bottom: 0; }
+.tbl tbody th { font-weight: 600; }
+.tbl td { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.tbl .k { display: inline-block; width: 14px; height: 3px; border-radius: 2px; background: var(--c); vertical-align: middle; margin-right: 0.5rem; }
+.tbl .gap { color: var(--muted); font-size: 0.8rem; margin-left: 0.5rem; }
+.tbl .none { color: var(--muted); }
+.unmeasured { color: var(--muted); font-size: 0.9rem; max-width: 80ch; }
+details.card > summary { cursor: pointer; padding: 0.7rem 0.9rem; color: var(--ink); }
+details.card[open] > summary { border-bottom: 1px solid var(--line); }
+
+/* The section's front page: one row per page. */
+.pages { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; max-width: 46rem; }
+.pages a { display: grid; gap: 0.25rem; padding: 0.9rem 1rem; text-decoration: none; color: var(--muted); }
+.pages a:hover { border-color: var(--notum); }
+.pages h2 { font-size: 1.15rem; color: var(--notum); }
+
+.foot { padding-block: 1.2rem 2.5rem; border-top: 1px solid var(--line); font: 0.75rem var(--mono); color: var(--muted); display: grid; gap: 0.3rem; }
+
+@media (max-width: 640px) {
+  .tip { position: static; box-shadow: none; border-width: 1px 0 0; border-radius: 0; background: transparent; min-height: 9.5rem; padding: 0.6rem 0.9rem; }
+  .controls { gap: 0.6rem; }
+  .tbl th, .tbl td { padding: 0.4rem 0.6rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .plot .series { transition: none; }
+}

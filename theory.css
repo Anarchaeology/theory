@@ -54,7 +54,9 @@ p { margin: 0; }
 .crumbs .home { display: inline-flex; align-items: center; gap: 0.5rem; }
 .crumbs img { width: 28px; height: 28px; }
 h1 { font-size: clamp(1.7rem, 4vw, 2.4rem); line-height: 1.08; }
-.lede { color: var(--muted); font-size: 1.05rem; max-width: 62ch; }
+/* Wide enough for the chart page's one sentence to sit on one line; where the screen is too narrow for that, it
+   breaks into lines of about the same length, so a lone last word never drops onto a line of its own. */
+.lede { color: var(--muted); font-size: 1.05rem; max-width: 84ch; text-wrap: balance; }
 
 main { display: grid; gap: 2.2rem; padding-bottom: 2rem; }
 section { display: grid; gap: 0.8rem; min-width: 0; }

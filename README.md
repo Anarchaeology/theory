@@ -8,7 +8,7 @@ Plain static files, no build step.
 
 | File | What it is |
 |---|---|
-| `index.html` | the section's front page: one row per page |
+| `index.html`, `index.js` | the section's front page: one row per page, and in its footer the latest "updated" date among their data files |
 | `ar-multiplier.html`, `ar-multiplier.js` | "Attack rating and damage": every measured profession's damage multiplier against AR on one chart, with the old number's straight line for each |
 | `data/ar-multiplier.json` | the one data file behind that page |
 | `hit-chance.html`, `hit-chance.js` | "Hit chance": every result against AR over defense, on the measured formula's curve for each of the defender's slider settings, with the linear formula's line for each, and a calculator |

@@ -85,7 +85,7 @@
     buildTables();
     if (data.updated) {
       const d = data.updated;
-      $('updated').textContent = `Curves updated ${+d.slice(8, 10)} ${MONTHS[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}.`;
+      $('updated').textContent = `Updated ${+d.slice(8, 10)} ${MONTHS[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}.`;
     }
     draw();
     showTip();

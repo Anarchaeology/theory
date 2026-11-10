@@ -84,7 +84,7 @@
     $('counts').textContent = `${nf(results.length)} results from ${nf(results.reduce((a, r) => a + r.swings, 0))} swings.`;
     if (data.updated) {
       const d = data.updated;
-      $('updated').textContent = `Results updated ${+d.slice(8, 10)} ${MONTHS[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}.`;
+      $('updated').textContent = `Updated ${+d.slice(8, 10)} ${MONTHS[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}.`;
     }
     const plot = $('plot');
     plot.setAttribute('aria-valuemin', 0); plot.setAttribute('aria-valuemax', xMax);

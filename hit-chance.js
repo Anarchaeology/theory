@@ -1,5 +1,5 @@
 // Hit chance page: loads data/hit-chance.json and draws every result against AR over defense, on the measured
-// formula's curve for each of the defender's slider settings, with the 1/√2 formula's line for each, a readout at any
+// formula's curve for each of the defender's slider settings, with the linear formula's line for each, a readout at any
 // AR over defense, a calculator and the tables. The results all come from that one file.
 (() => {
   const $ = id => document.getElementById(id);
@@ -18,8 +18,8 @@
   // Measured: 50% + (AR − Def) / (Def + |AR − Def|) + (slider + 100) / 500, held to 0..1.
   const clamp = v => Math.max(0, Math.min(1, v));
   const formula = (ratio, slider) => clamp(0.5 + (ratio - 1) / (1 + Math.abs(ratio - 1)) + (slider + 100) / 500);
-  // The 1/√2 formula, the one in common use: 1/√2 · AR / Def + slider / 500, held to 0..1.
-  const rootTwoFormula = (ratio, slider) => clamp(ratio / Math.SQRT2 + slider / 500);
+  // The linear formula, the one in common use: AR / (√2 · Def) + slider / 500, held to 0..1.
+  const linearFormula = (ratio, slider) => clamp(ratio / Math.SQRT2 + slider / 500);
 
   const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const nf = n => Math.round(n).toLocaleString('en');
@@ -38,9 +38,6 @@
     if (text != null) node.textContent = text;
     return node;
   };
-  // "1/√2" with the root written as a root: the radical sign, then a bar over the 2 (theory.css, .sqrt).
-  const rootTwo = () => { const f = document.createDocumentFragment(), s = html('span', 'sqrt', '√'); s.append(html('span', '', '2')); f.append('1/', s); return f; };
-  const withRootTwo = (cls, text) => { const c = html('td', cls); c.append(rootTwo(), text); return c; };
   const keyCell = (tag, color, text) => { const c = html(tag); const k = html('span', 'k'); k.style.setProperty('--c', color); c.append(k); if (text) c.append(text); return c; };
 
   // The 95% range of a share (landed of swings), by the Wilson score: it behaves where every swing landed or none did.
@@ -66,7 +63,7 @@
   function init(data) {
     results = data.results.map(r => {
       const ratio = r.ar / r.def, share = r.landed / r.swings, [lo, hi] = range95(r.landed, r.swings);
-      return { ...r, ratio, share, lo, hi, fit: formula(ratio, r.slider), other: rootTwoFormula(ratio, r.slider) };
+      return { ...r, ratio, share, lo, hi, fit: formula(ratio, r.slider), other: linearFormula(ratio, r.slider) };
     });
     // One series per slider setting in the data, full aggressive first: the order the curves sit in, top to bottom.
     series = [...new Set(results.map(r => r.slider))].sort((a, b) => b - a).map(v => ({
@@ -178,18 +175,18 @@
     grid.append(el('text', { x: m.l + pw, y: H - 5, 'text-anchor': 'end', class: 'axis-title' }, 'AR ÷ defense'));
     svg.append(grid);
 
-    // A curve sampled along the axis: the measured formula, the 1/√2 one, or the gap between them.
+    // A curve sampled along the axis: the measured formula, the linear one, or the gap between them.
     const path = fn => {
       const pts = [];
       for (let i = 0; i <= 220; i++) { const r = xMax * i / 220; pts.push(`${x(r).toFixed(1)},${y(fn(r)).toFixed(1)}`); }
       return 'M' + pts.join('L');
     };
 
-    // The 1/√2 formula's lines go under everything else.
+    // The linear formula's lines go under everything else.
     if (state.other) {
       for (const s of vis) {
         const g = el('g', { class: 'series', 'data-id': s.id, style: `--c:${s.color}`, 'clip-path': 'url(#plot-area)' });
-        g.append(el('path', { d: path(r => (hit ? rootTwoFormula(r, s.slider) : rootTwoFormula(r, s.slider) - formula(r, s.slider)) * 100), class: 'other' }));
+        g.append(el('path', { d: path(r => (hit ? linearFormula(r, s.slider) : linearFormula(r, s.slider) - formula(r, s.slider)) * 100), class: 'other' }));
         svg.append(g);
       }
     }
@@ -250,7 +247,7 @@
   }
 
   // The readout at the AR over defense under the pointer (or, on a phone, the last one touched): the measured
-  // formula's hit chance at each slider setting switched on, with the 1/√2 formula's figure and how far the two are apart.
+  // formula's hit chance at each slider setting switched on, with the linear formula's figure and how far the two are apart.
   function showTip() {
     const tip = $('tip'), plot = $('plot');
     drawHover();
@@ -266,11 +263,11 @@
     const table = html('table'), spoken = [];
     for (const s of series) {
       if (!state.on.has(s.id)) continue;
-      const f = formula(ratio, s.slider), o = rootTwoFormula(ratio, s.slider);
+      const f = formula(ratio, s.slider), o = linearFormula(ratio, s.slider);
       const tr = html('tr');
-      tr.append(keyCell('td', s.color), html('td', 'v', pc(f)), html('td', 'n', s.name), withRootTwo('s', ` ${pc(o)}`), html('td', 's', points((o - f) * 100)));
+      tr.append(keyCell('td', s.color), html('td', 'v', pc(f)), html('td', 'n', s.name), html('td', 's', `linear ${pc(o)}`), html('td', 's', points((o - f) * 100)));
       table.append(tr);
-      spoken.push(`${s.name} ${pc(f)}, by the 1 over root 2 formula ${pc(o)}`);
+      spoken.push(`${s.name} ${pc(f)}, by the linear formula ${pc(o)}`);
     }
     tip.replaceChildren(html('h3', '', `AR at ${ratio.toFixed(2)} × defense`), spoken.length ? table : html('p', 'hint', 'No slider setting is switched on.'));
     tip.hidden = false;
@@ -309,17 +306,15 @@
     const out = $('calc-out');
     out.replaceChildren();
     if (!(ar > 0) || !(def > 0)) { out.textContent = 'Enter an AR and a defense above 0.'; return; }
-    const ratio = ar / def, f = formula(ratio, slider), o = rootTwoFormula(ratio, slider);
+    const ratio = ar / def, f = formula(ratio, slider), o = linearFormula(ratio, slider);
     out.append(html('b', 'big', pc(f)), ' of swings land.');
-    const sub = html('span', 'sub', `AR is ${ratio.toFixed(2)} × the defense. By the `);
-    sub.append(rootTwo(), ` formula it would be ${pc(o)}${Math.abs(o - f) < 0.0005 ? ', the same' : `, ${points((o - f) * 100)} points`}.`);
-    out.append(sub);
+    out.append(html('span', 'sub', `AR is ${ratio.toFixed(2)} × the defense. By the linear formula it would be ${pc(o)}${Math.abs(o - f) < 0.0005 ? ', the same' : `, ${points((o - f) * 100)} points`}.`));
   }
 
   // ---- Tables ------------------------------------------------------------------------------------------------------
 
   function buildTables() {
-    // The measured formula's hit chance at round steps of AR over defense, for each slider setting, with the 1/√2
+    // The measured formula's hit chance at round steps of AR over defense, for each slider setting, with the linear
     // formula's figure beside it.
     const order = [...series].reverse(); // full defensive first, as the slider runs
     const head = $('by-ratio-head'), body = $('by-ratio');
@@ -330,8 +325,7 @@
       tr.append(html('th', 'num', ratio.toFixed(2)));
       for (const s of order) {
         const td = html('td', '', pc(formula(ratio, s.slider)));
-        const other = html('span', 'gap'); other.append(rootTwo(), ` ${pc(rootTwoFormula(ratio, s.slider))}`);
-        td.append(other);
+        td.append(html('span', 'gap', `linear ${pc(linearFormula(ratio, s.slider))}`));
         tr.append(td);
       }
       body.append(tr);

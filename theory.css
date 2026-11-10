@@ -138,9 +138,6 @@ input[type="range"] { accent-color: var(--notum); flex: 1 1 12rem; min-width: 8r
 .verdict .sub { display: block; color: var(--muted); font-size: 0.9rem; margin-top: 0.2rem; }
 .verdict .big { font: 600 1.5rem var(--display); margin-right: 0.3rem; }
 .pickers label.wide { flex: 0 1 24rem; }
-/* A square root written out: the radical sign, then a bar over what it covers. */
-.sqrt { white-space: nowrap; }
-.sqrt > span { border-top: 0.07em solid currentColor; padding: 0 0.06em; }
 .formula { display: block; margin-top: 0.3rem; font: 0.9rem var(--mono); color: var(--ink); }
 /* A formula stays on one line where the screen has the room, even past the paragraph's own width. */
 @media (min-width: 720px) { .formula { white-space: nowrap; } }

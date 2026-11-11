@@ -62,8 +62,7 @@ main { display: grid; gap: 2.2rem; padding-bottom: 2rem; }
 section { display: grid; gap: 0.8rem; min-width: 0; }
 section > h2 { font-size: 1.3rem; }
 .prose { color: var(--muted); max-width: 68ch; }
-.prose b, .points b { color: var(--ink); font-weight: 600; }
-.points { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.5rem; color: var(--muted); max-width: 72ch; }
+.prose b { color: var(--ink); font-weight: 600; }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 3px; min-width: 0; }
 .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 

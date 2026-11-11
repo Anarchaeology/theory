@@ -5,10 +5,9 @@
   const $ = id => document.getElementById(id);
   const SVG = 'http://www.w3.org/2000/svg';
 
-  // One fixed color per profession (theory.css, --s-*). A profession keeps its color whatever else is switched on.
-  // A newly measured profession needs a line here; until it has one it draws in gray.
-  const COLOR = { keeper: 'purple', fixer: 'pink', doctor: 'cyan', trader: 'green', bureaucrat: 'gold' };
-  const colorOf = p => (COLOR[p.id] ? `var(--s-${COLOR[p.id]})` : 'var(--muted)');
+  // One fixed color per profession, all 14 (theory.css, --p-<id>). A profession keeps its color whatever else is switched
+  // on; one theory.css doesn't know draws in gray.
+  const colorOf = p => `var(--p-${p.id}, var(--muted))`;
 
   const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const nf = n => Math.round(n).toLocaleString('en');

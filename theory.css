@@ -12,13 +12,30 @@
   --display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
   --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   --mono: "IBM Plex Mono", Consolas, monospace;
-  /* Chart colors, one per profession, the same five hues in both themes. Every pair passes the dataviz palette
-     check (colorblind separation, normal-vision separation, 3:1 against the surface) on --surface: see README.md. */
+  /* The hit chance chart's colors, one per slider setting, the same five hues in both themes. Every pair passes the
+     dataviz palette check (colorblind separation, normal-vision separation, 3:1 against the surface) on --surface. */
   --s-purple: #8758c9;
   --s-pink: #e05c8c;
   --s-cyan: #179fc7;
   --s-green: #0a7e3a;
   --s-gold: #af8c11;
+  /* The AR chart's colors, one per profession (--p-<id>), all 14. A few pairs look alike (Doctor and Enforcer, say), so
+     every curve is named at its end and in the hover: see README.md. Here, the dark theme's: five are lightened from the
+     light theme's, their hue kept, to clear 3:1 against --surface. */
+  --p-adventurer: #796867;
+  --p-agent: #5475a5;
+  --p-bureaucrat: #676796;
+  --p-doctor: #cb2e2d;
+  --p-enforcer: #ba4637;
+  --p-engineer: #767e87;
+  --p-fixer: #2b69dc;
+  --p-keeper: #0e8c04;
+  --p-martial-artist: #b7783e;
+  --p-meta-physicist: #227a52;
+  --p-nano-technician: #429b84;
+  --p-shade: #3d99a5;
+  --p-soldier: #9b8455;
+  --p-trader: #9a5289;
   --axis: #3a4c53;
   color-scheme: dark;
 }
@@ -27,6 +44,10 @@
     --bg: #eef2f1; --surface: #ffffff; --raised: #f6f8f7; --ink: #16201e; --muted: #576562;
     --line: #cfd9d6; --notum: #1d6676; --amber: #9c5a17;
     --s-purple: #6635a3; --s-pink: #c94779; --s-cyan: #1aa1c9; --s-green: #09672e; --s-gold: #b18e15;
+    --p-adventurer: #544443; --p-agent: #5475a5; --p-bureaucrat: #555582; --p-doctor: #c62828; --p-enforcer: #ba4637;
+    --p-engineer: #767e87; --p-fixer: #2b69dc; --p-keeper: #0e8c04; --p-martial-artist: #b7783e;
+    --p-meta-physicist: #026842; --p-nano-technician: #429b84; --p-shade: #3d99a5; --p-soldier: #9b8455;
+    --p-trader: #8f487e;
     --axis: #9fb0ac;
     color-scheme: light;
   }

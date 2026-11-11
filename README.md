@@ -96,27 +96,48 @@ written in `hit-chance.js`; the slider settings' names and colors are there too 
 
 ## Chart colors
 
-Each profession has one fixed color (`COLOR` in `ar-multiplier.js`, the `--s-*` values in `theory.css`), the same hue
-in the light and the dark theme. A newly measured profession draws in gray until it is given one.
-
-The five in use were picked so that every pair passes the dataviz palette check on the chart's own background
-(colorblind separation of 8 or more, normal-vision separation of 15 or more, 3:1 contrast, lightness band), since any
-two curves can cross:
+**The attack rating chart.** Each of the 14 professions has one fixed color, `--p-<id>` in `theory.css`, which
+`ar-multiplier.js` takes by the profession's id; one it doesn't know draws in gray. The light theme has them as they are.
+In the dark theme five are lightened, their hue kept, so that every one clears 3:1 against the chart's surface:
 
 | | Light, on `#ffffff` | Dark, on `#162024` |
 |---|---|---|
-| Keeper | `#6635a3` | `#8758c9` |
-| Fixer | `#c94779` | `#e05c8c` |
-| Doctor | `#1aa1c9` | `#179fc7` |
-| Trader | `#09672e` | `#0a7e3a` |
-| Bureaucrat | `#b18e15` | `#af8c11` |
+| Adventurer | `#544443` | `#796867` (lightened) |
+| Agent | `#5475a5` | `#5475a5` |
+| Bureaucrat | `#555582` | `#676796` (lightened) |
+| Doctor | `#c62828` | `#cb2e2d` (lightened) |
+| Enforcer | `#ba4637` | `#ba4637` |
+| Engineer | `#767e87` | `#767e87` |
+| Fixer | `#2b69dc` | `#2b69dc` |
+| Keeper | `#0e8c04` | `#0e8c04` |
+| Martial Artist | `#b7783e` | `#b7783e` |
+| Meta-Physicist | `#026842` | `#227a52` (lightened) |
+| Nano-Technician | `#429b84` | `#429b84` |
+| Shade | `#3d99a5` | `#3d99a5` |
+| Soldier | `#9b8455` | `#9b8455` |
+| Trader | `#8f487e` | `#9a5289` (lightened) |
+
+Fourteen colors can't all be told apart from one another: past six, no set passes the dataviz palette check
+(colorblind separation of 8 or more, normal-vision separation of 15 or more) on every pair, and a few of these pairs are
+close: Doctor and Enforcer, Martial Artist and Soldier, Nano-Technician and Shade, and for red-green colorblind readers
+Doctor and Keeper. So a curve isn't told by its color alone: each is named at its end, the hover names every curve under
+the pointer, and the buttons and tables put the name beside the color.
+
+**The hit chance chart.** One color per defender's slider setting, `--s-*` in `theory.css` (`SLIDERS` in
+`hit-chance.js`), the same hue in both themes. The five were picked so that every pair passes the check, since any two
+curves can cross:
+
+| | Light, on `#ffffff` | Dark, on `#162024` |
+|---|---|---|
+| `--s-purple` | `#6635a3` | `#8758c9` |
+| `--s-pink` (full aggressive) | `#c94779` | `#e05c8c` |
+| `--s-cyan` (full defensive) | `#1aa1c9` | `#179fc7` |
+| `--s-green` | `#09672e` | `#0a7e3a` |
+| `--s-gold` (neutral) | `#b18e15` | `#af8c11` |
 
 ```
 node validate_palette.js "#6635a3,#c94779,#1aa1c9,#09672e,#b18e15" --mode light --surface "#ffffff" --pairs all
 node validate_palette.js "#8758c9,#e05c8c,#179fc7,#0a7e3a,#af8c11" --mode dark --surface "#162024" --pairs all
 ```
-
-Run both again with the whole list whenever a color is added. About eight colors can be told apart this way; past
-that the chart needs another way to show which curve is which.
 
 Anarchy Online belongs to Funcom. This is a fan site, not affiliated with Funcom.

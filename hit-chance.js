@@ -106,6 +106,10 @@
     // The button pointed at lights up with its color while its curve is on the chart because of it.
     const mark = id => { for (const c of box.children) c.classList.toggle('previewing', id != null && c.dataset.id === id); };
     const preview = id => { if (state.preview !== id) { state.preview = id; mark(id); draw(); showTip(); } };
+    // Leaving a button ends its pointing a moment later, not at once: crossing the gap to the next button would
+    // otherwise draw the chart without either in between, and it would flash. Pointing at the next one takes its place.
+    let leaving = 0;
+    const leave = id => { clearTimeout(leaving); leaving = setTimeout(() => { if (state.preview === id) preview(null); }, 150); };
     for (const s of series) {
       const b = html('button', 'chip');
       b.type = 'button';
@@ -123,10 +127,10 @@
         draw(); showTip();
       };
       // A touch has no pointing before the tap, and a click moves focus without the keyboard having asked for it.
-      b.onpointerenter = e => { if (e.pointerType === 'mouse') preview(s.id); };
+      b.onpointerenter = e => { if (e.pointerType === 'mouse') { clearTimeout(leaving); preview(s.id); } };
       // Leaving, or losing focus, only ends the pointing if this button's is the one in force: pressing the mouse on
       // another button takes focus from the one clicked before, and that must not blank what is being pointed at.
-      b.onpointerleave = () => { if (state.preview === s.id) preview(null); };
+      b.onpointerleave = () => { if (state.preview === s.id) leave(s.id); };
       b.onfocus = () => { if (b.matches(':focus-visible')) preview(s.id); };
       b.onblur = () => { if (state.preview === s.id && !b.matches(':hover')) preview(null); };
       box.append(b);

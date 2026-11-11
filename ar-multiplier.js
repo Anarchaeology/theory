@@ -51,12 +51,18 @@
     return null;
   }
   const gapAt = (p, ar) => { const m = measuredAt(p, ar); return m == null ? null : (m / oldAt(p, ar) - 1) * 100; };
-  // The curve carried on past its last reading, along the line through its last two points, the way the theorycrafter
-  // carries it on. Only the comparison uses this: the chart and the tables stop where the readings do.
+  // The curve carried on past its last reading, the way the theorycrafter carries it on: at the climb of its last
+  // stretch, which runs back from the last reading to the latest one at least 100 AR under it (or to the soft cap,
+  // the curve's first point, where none is). A reading is good to about a point of damage, so two a few AR apart say
+  // little about the climb between them. The climb is never taken as less than none. Only the comparison uses this:
+  // the chart and the tables stop where the readings do.
+  const LAST_STRETCH_MIN_AR = 100;
   function curveAt(p, ar) {
     if (ar <= p.last) return measuredAt(p, ar);
-    const [a0, m0] = p.pts[p.pts.length - 2], [a1, m1] = p.pts[p.pts.length - 1];
-    return m1 + (m1 - m0) * (ar - a1) / (a1 - a0);
+    const pts = p.pts, [a1, m1] = pts[pts.length - 1];
+    let from = pts[0];
+    for (let i = pts.length - 2; i > 0; i--) if (a1 - pts[i][0] >= LAST_STRETCH_MIN_AR) { from = pts[i]; break; }
+    return m1 + Math.max(0, (m1 - from[1]) / (a1 - from[0])) * (ar - a1);
   }
   // How far the comparison goes: about as high as AR gets in game, well past where the readings stop.
   const COMPARE_TO = 3500;
@@ -403,7 +409,7 @@
     const note = $('cmp-note');
     note.hidden = !past.length;
     note.replaceChildren();
-    if (past.length) note.append(star(), ` Past ${past.map(p => `the ${p.name}’s last reading (AR ${nf(p.last)})`).join(' and ')}, the curve is carried on in a straight line from its last two readings.`);
+    if (past.length) note.append(star(), ` Past ${past.map(p => `the ${p.name}’s last reading (AR ${nf(p.last)})`).join(' and ')}, the curve is carried on in a straight line, at the climb of its last 100 AR or more of readings.`);
 
     const out = $('cmp-verdict');
     out.replaceChildren();

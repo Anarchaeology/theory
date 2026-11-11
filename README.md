@@ -104,7 +104,8 @@ dotnet run ExportCrit.cs -- "PATH\TO\ao-theorycrafter" "..\data\crit.json"
 ```
 
 It reads every hit lab plan that gives its characters' Critical Increase (`HitData/<plan>.json`, for that alone) and
-that plan's results (`HitData/<plan>/steps.tsv`), and keeps only the numbers.
+that plan's results (`HitData/<plan>/steps.tsv`), and keeps only the numbers. Results it leaves out are named in the
+tool (`leftOut`): so far the crit test's one result at Critical Increase 21.
 
 ```
 {
@@ -172,7 +173,7 @@ node validate_palette.js "#6635a3,#c94779,#1aa1c9,#09672e,#b18e15" --mode light 
 node validate_palette.js "#8758c9,#e05c8c,#179fc7,#0a7e3a,#af8c11" --mode dark --surface "#162024" --pairs all
 ```
 
-**The crit chart.** One color per Critical Increase, from the same five (`COLORS` in `crit.js`): 2 is `--s-cyan`, 7
-`--s-pink` and 21 `--s-gold`. One with no color there draws in gray.
+**The crit chart.** One color per Critical Increase, from the same five (`COLORS` in `crit.js`): 2 is `--s-cyan` and 7
+`--s-pink`. One with no color there draws in gray.
 
 Anarchy Online belongs to Funcom. This is a fan site, not affiliated with Funcom.

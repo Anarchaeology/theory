@@ -7,7 +7,7 @@
 
   // The Critical Increases the results were taken at, each with one fixed color (theory.css, --s-*). One with no color
   // here still draws, in gray.
-  const COLORS = { '2': 'cyan', '7': 'pink', '21': 'gold' };
+  const COLORS = { '2': 'cyan', '7': 'pink' };
 
   // The hit formula: the hit chance before it's held at 100%, from AR, defense and the defender's slider.
   const hitFormula = (ar, def, slider) => 0.5 + (ar - def) / (def + Math.abs(ar - def)) + (slider + 100) / 500;

@@ -5,6 +5,8 @@
 //   HitData/<plan>/steps.tsv    one row per result: an attacker's AR against a defender's defense at one slider
 //                               setting, with how many swings landed and how many of those crit
 //
+// A few results are left out by name (leftOut, below).
+//
 // Only the numbers are read: AR, defense, the defender's slider, the attacker's Critical Increase, landed and crits.
 // Who swung, the notes and everything else in that folder (logs, plans' other fields) are left where they are.
 //
@@ -24,6 +26,9 @@ if (args.Length != 2)
 string repo = args[0], output = args[1];
 var inv = CultureInfo.InvariantCulture;
 var jsonOptions = new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip, AllowTrailingCommas = true };
+
+// Results left out of the page, by plan, step and direction: the crit test's one result at Critical Increase 21.
+var leftOut = new HashSet<(string Plan, string Step, string Direction)> { ("crit", "2", "YouHitThem") };
 
 double? CritIncreaseOf(JsonElement side) =>
     side.ValueKind == JsonValueKind.Object && side.TryGetProperty("CritIncrease", out var ci) && ci.ValueKind == JsonValueKind.Number
@@ -70,6 +75,7 @@ foreach (string planPath in Directory.GetFiles(hitData, "*.json").Order(StringCo
         if (lines[i].Length == 0) continue;
         string[] cells = lines[i].Split('\t');
         int Number(int column) => int.Parse(cells[column], NumberStyles.AllowLeadingSign, inv);
+        if (leftOut.Contains((name, cells[stepColumn], cells[direction]))) continue;
         if (!critIncrease.TryGetValue((cells[stepColumn], cells[direction]), out var ci) || ci is not double critInc) continue;
         var row = (Number(ar), Number(def), Number(slider), critInc, Number(landed), Number(crits));
         if (row.Item5 == 0) continue; // nothing landed: a step that was planned and never run, or no crit to count

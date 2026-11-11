@@ -13,8 +13,10 @@ Plain static files, no build step.
 | `data/ar-multiplier.json` | the one data file behind that page |
 | `hit-chance.html`, `hit-chance.js` | "Hit chance": every result against AR over defense, on the measured formula's curve for each of the defender's slider settings, with the linear formula's line for each, and a calculator |
 | `data/hit-chance.json` | the one data file behind that page |
+| `crit.html`, `crit.js` | "Crit chance": every result against the hit formula, on the measured formula's line for each Critical Increase, with Critical Increase alone beside each, and a calculator |
+| `data/crit.json` | the one data file behind that page |
 | `theory.css` | the look, shared by every page here (the gallery's colors and typefaces) |
-| `tools/ExportArMultiplier.cs`, `tools/ExportHitChance.cs` | write the two data files from a theorycrafter checkout |
+| `tools/ExportArMultiplier.cs`, `tools/ExportHitChance.cs`, `tools/ExportCrit.cs` | write the three data files from a theorycrafter checkout |
 
 To look at the pages on your own PC, serve this folder with any static web server (the chart page loads its data
 file, which a page opened straight from disk can't do):
@@ -27,7 +29,7 @@ then open http://localhost:8138/. The logo and icon come from the live gallery.
 
 ## The data files
 
-Both are written by a tool and never edited by hand.
+All three are written by a tool and never edited by hand.
 
 ### `data/ar-multiplier.json`
 
@@ -94,6 +96,36 @@ It reads the hit lab's results (`HitData/curve/steps.tsv`) and keeps only the nu
 More results are a change to this file only. The two formulas the page draws, the measured one and the linear one in common use, are
 written in `hit-chance.js`; the slider settings' names and colors are there too (`SLIDERS`).
 
+### `data/crit.json`
+
+```
+cd tools
+dotnet run ExportCrit.cs -- "PATH\TO\ao-theorycrafter" "..\data\crit.json"
+```
+
+It reads every hit lab plan that gives its characters' Critical Increase (`HitData/<plan>.json`, for that alone) and
+that plan's results (`HitData/<plan>/steps.tsv`), and keeps only the numbers.
+
+```
+{
+  "updated": "2026-11-11",
+  "sourceCommit": "c7f8bd2",
+  "results": [
+    { "ar": 133, "def": 1000, "slider": -100, "critIncrease": 7, "landed": 73, "crits": 8 },
+    ...
+  ]
+}
+```
+
+- One entry per result: an attacker's AR against a defender's defense, with the defender's slider, the attacker's
+  Critical Increase, how many swings landed and how many of those crit.
+- The page works out the rest: the hit formula, the share that crit and its 95% range, and how well the measured formula
+  fits the results (under "The results").
+
+More results, from a plan already read or a new one, are a change to this file only. The two figures the page draws,
+the measured formula and Critical Increase alone, are written in `crit.js`; each Critical Increase's color is there too
+(`COLORS`).
+
 ## Chart colors
 
 **The attack rating chart.** Each of the 14 professions has one fixed color, `--p-<id>` in `theory.css`, which
@@ -139,5 +171,8 @@ curves can cross:
 node validate_palette.js "#6635a3,#c94779,#1aa1c9,#09672e,#b18e15" --mode light --surface "#ffffff" --pairs all
 node validate_palette.js "#8758c9,#e05c8c,#179fc7,#0a7e3a,#af8c11" --mode dark --surface "#162024" --pairs all
 ```
+
+**The crit chart.** One color per Critical Increase, from the same five (`COLORS` in `crit.js`): 2 is `--s-cyan`, 7
+`--s-pink` and 21 `--s-gold`. One with no color there draws in gray.
 
 Anarchy Online belongs to Funcom. This is a fan site, not affiliated with Funcom.

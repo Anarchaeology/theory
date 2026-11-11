@@ -137,6 +137,8 @@ section > h2 { font-size: 1.3rem; }
 .plot .reading.small { stroke-width: 1; }
 .plot .whisker { stroke: var(--c); stroke-width: 1; opacity: 0.9; }
 .plot .cross { stroke: var(--ink); stroke-width: 1; opacity: 0.55; }
+/* The crit chart's line at 100% of the hit formula, past which every swing lands. */
+.plot .full { stroke: var(--axis); stroke-width: 1; stroke-dasharray: 3 3; }
 .plot .empty { fill: var(--muted); font: 14px var(--body); }
 .plot .hit { fill: transparent; cursor: crosshair; }
 

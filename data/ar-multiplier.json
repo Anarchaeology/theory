@@ -1,6 +1,6 @@
 {
   "updated": "2026-11-11",
-  "sourceCommit": "7857ad6",
+  "sourceCommit": "1e1dea5",
   "softCap": { "ar": 1000, "multiplier": 3.5, "arPerPoint": 400 },
   "professions": [
     { "id": "adventurer", "name": "Adventurer", "old": 0.30, "points": [] },
@@ -45,7 +45,12 @@
       [3489, 5.46667]
     ] },
     { "id": "martial-artist", "name": "Martial Artist", "old": 0.30, "points": [] },
-    { "id": "meta-physicist", "name": "Meta-Physicist", "old": 0.13, "points": [] },
+    { "id": "meta-physicist", "name": "Meta-Physicist", "old": 0.13, "points": [
+      [1044, 3.51579], [1144, 3.55789], [1264, 3.60526], [1404, 3.63158], [1462, 3.64308], [1524, 3.65263],
+      [1672, 3.66923], [1769, 3.67385], [1901, 3.68000], [2058, 3.70000], [2171, 3.70308], [2268, 3.70923],
+      [2418, 3.71385], [2478, 3.72000], [2552, 3.72000], [2609, 3.72154], [2709, 3.73077], [2750, 3.73077],
+      [2921, 3.74000], [3181, 3.75692], [3338, 3.75846], [3458, 3.78000], [3674, 3.79077]
+    ] },
     { "id": "nano-technician", "name": "Nano-Technician", "old": 0.13, "points": [] },
     { "id": "shade", "name": "Shade", "old": 0.28, "points": [] },
     { "id": "soldier", "name": "Soldier", "old": 0.30, "points": [] },

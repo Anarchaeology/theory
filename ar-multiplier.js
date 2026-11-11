@@ -52,11 +52,11 @@
   }
   const gapAt = (p, ar) => { const m = measuredAt(p, ar); return m == null ? null : (m / oldAt(p, ar) - 1) * 100; };
   // The curve carried on past its last reading, the way the theorycrafter carries it on: at the climb of its last
-  // stretch, which runs back from the last reading to the latest one at least 100 AR under it (or to the soft cap,
+  // stretch, which runs back from the last reading to the latest one at least 200 AR under it (or to the soft cap,
   // the curve's first point, where none is). A reading is good to about a point of damage, so two a few AR apart say
   // little about the climb between them. The climb is never taken as less than none. Only the comparison uses this:
   // the chart and the tables stop where the readings do.
-  const LAST_STRETCH_MIN_AR = 100;
+  const LAST_STRETCH_MIN_AR = 200;
   function curveAt(p, ar) {
     if (ar <= p.last) return measuredAt(p, ar);
     const pts = p.pts, [a1, m1] = pts[pts.length - 1];
@@ -409,7 +409,7 @@
     const note = $('cmp-note');
     note.hidden = !past.length;
     note.replaceChildren();
-    if (past.length) note.append(star(), ` Past ${past.map(p => `the ${p.name}’s last reading (AR ${nf(p.last)})`).join(' and ')}, the curve is carried on in a straight line, at the climb of its last 100 AR or more of readings.`);
+    if (past.length) note.append(star(), ` Past ${past.map(p => `the ${p.name}’s last reading (AR ${nf(p.last)})`).join(' and ')}, the curve is carried on in a straight line, at the climb of its last 200 AR or more of readings.`);
 
     const out = $('cmp-verdict');
     out.replaceChildren();

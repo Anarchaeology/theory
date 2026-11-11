@@ -59,7 +59,7 @@ else, so the page shows the same curves the app uses. Needs the .NET 10 SDK.
 
 The comparison under the chart runs to AR 3,500, past where the readings stop. Past a profession's last reading it
 carries the curve on at the climb of its last stretch, as the theorycrafter does (`curveAt` in `ar-multiplier.js`):
-from the last reading back to the latest one at least 100 AR under it. Those figures are marked with an asterisk. The chart and the tables stop at the last reading.
+from the last reading back to the latest one at least 200 AR under it. Those figures are marked with an asterisk. The chart and the tables stop at the last reading.
 
 More readings, or a newly measured profession, are a change to this file only: the chart, the buttons, the comparison
 and the tables are all built from it. The words under "What the readings show" are written by hand in

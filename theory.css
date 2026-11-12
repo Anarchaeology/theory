@@ -188,6 +188,8 @@ table.tbl { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
 .tbl th:first-child, .tbl td:first-child { text-align: left; }
 .tbl tbody tr:last-child td, .tbl tbody tr:last-child th { border-bottom: 0; }
 .tbl tbody th { font-weight: 600; }
+/* A row named in words may wrap where the screen is narrow, so the numbers beside it stay in view. */
+.tbl tbody th.words { white-space: normal; min-width: 9rem; }
 .tbl td { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 .tbl .k { display: inline-block; width: 14px; height: 3px; border-radius: 2px; background: var(--c); vertical-align: middle; margin-right: 0.5rem; }
 .tbl .gap { color: var(--muted); font-size: 0.8rem; margin-left: 0.5rem; }

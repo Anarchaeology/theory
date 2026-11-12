@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-11",
-  "sourceCommit": "c7f8bd2",
+  "updated": "2026-11-12",
+  "sourceCommit": "65a5bdb",
   "results": [
     { "ar": 133, "def": 1000, "slider": -100, "critIncrease": 7, "landed": 73, "crits": 8 },
     { "ar": 200, "def": 1000, "slider": -100, "critIncrease": 7, "landed": 103, "crits": 5 },
@@ -17,8 +17,8 @@
     { "ar": 200, "def": 1000, "slider": 0, "critIncrease": 7, "landed": 618, "crits": 54 },
     { "ar": 700, "def": 1000, "slider": -100, "critIncrease": 7, "landed": 621, "crits": 46 },
     { "ar": 167, "def": 238, "slider": -100, "critIncrease": 2, "landed": 522, "crits": 20 },
-    { "ar": 190, "def": 238, "slider": -100, "critIncrease": 2, "landed": 808, "crits": 35 },
     { "ar": 190, "def": 238, "slider": -100, "critIncrease": 2, "landed": 227, "crits": 8 },
+    { "ar": 190, "def": 238, "slider": -100, "critIncrease": 2, "landed": 808, "crits": 35 },
     { "ar": 800, "def": 1000, "slider": -100, "critIncrease": 7, "landed": 741, "crits": 73 },
     { "ar": 133, "def": 238, "slider": 0, "critIncrease": 2, "landed": 877, "crits": 45 },
     { "ar": 214, "def": 238, "slider": -100, "critIncrease": 2, "landed": 958, "crits": 33 },
@@ -60,6 +60,7 @@
     { "ar": 832, "def": 608, "slider": 100, "critIncrease": 2, "landed": 2576, "crits": 198 },
     { "ar": 742, "def": 519, "slider": 100, "critIncrease": 7, "landed": 1577, "crits": 220 },
     { "ar": 832, "def": 519, "slider": 100, "critIncrease": 7, "landed": 2576, "crits": 373 },
-    { "ar": 428, "def": 238, "slider": 100, "critIncrease": 2, "landed": 2119, "crits": 228 }
+    { "ar": 428, "def": 238, "slider": 100, "critIncrease": 2, "landed": 2119, "crits": 228 },
+    { "ar": 1011, "def": 306, "slider": 100, "critIncrease": 2, "landed": 2244, "crits": 345 }
   ]
 }

@@ -231,7 +231,7 @@
         svg.append(g);
       }
     }
-    const labels = [];
+    const labels = [], lines = [];
     for (const p of vis) {
       const g = el('g', { class: 'series', 'data-id': p.id, style: `--c:${p.color}` });
       const pts = p.pts.map(([ar, v]) => [x(ar), y(mult ? v : (v / oldAt(p, ar) - 1) * 100)]);
@@ -243,16 +243,39 @@
       }
       const end = pts[pts.length - 1];
       svg.append(g);
+      lines.push({ p, pts });
       labels.push({ p, x: end[0] + 9, y: end[1] + 4, w: p.name.length * 7.2 });
     }
-    // Names at the line ends, where there is room for them. Two that would overlap are moved apart.
+    // Names at the line ends, where there is room for them. A name that would sit on another curve, or on a name already
+    // placed, tries a line's height above, then below, then two above and two below. If none of those is clear of both,
+    // it takes the first clear of names, or failing that, goes below the names in its way.
     if (!narrow) {
+      // A name's box is its text: 12px type, from its cap height to its descenders around the baseline at l.y.
+      const box = (l, dy) => ({ x0: l.x - 2, x1: l.x + l.w + 4, y0: l.y + dy - 10, y1: l.y + dy + 3 });
+      const meets = (a, b) => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
+      // Whether a curve passes through a box: each segment, over the part of the box's width it spans.
+      const crosses = (pts, b) => pts.some((q, i) => {
+        if (i === 0) return false;
+        const [xa, ya] = pts[i - 1], [xb, yb] = q;
+        const lo = Math.max(b.x0, Math.min(xa, xb)), hi = Math.min(b.x1, Math.max(xa, xb));
+        if (lo > hi) return false;
+        const at = xx => (xb === xa ? ya : ya + (yb - ya) * (xx - xa) / (xb - xa));
+        return Math.min(at(lo), at(hi)) <= b.y1 && Math.max(at(lo), at(hi)) >= b.y0;
+      });
+      const placed = [];
       labels.sort((a, b) => a.y - b.y);
-      for (let i = 1; i < labels.length; i++) {
-        for (let j = 0; j < i; j++) {
-          const a = labels[j], b = labels[i];
-          if (b.x < a.x + a.w + 6 && a.x < b.x + b.w + 6 && b.y - a.y < 15) b.y = a.y + 15;
+      for (const l of labels) {
+        const others = lines.filter(c => c.p !== l.p);
+        const clearOfNames = dy => !placed.some(q => meets(q, box(l, dy)));
+        const clear = dy => clearOfNames(dy) && !others.some(c => crosses(c.pts, box(l, dy)));
+        const tries = [0, -14, 14, -28, 28];
+        let dy = tries.find(clear) ?? tries.find(clearOfNames);
+        if (dy === undefined) {
+          dy = 0;
+          for (const q of placed) if (meets(q, box(l, dy))) dy = q.y1 - (l.y - 10) + 1;
         }
+        l.y += dy;
+        placed.push(box(l, 0));
       }
       for (const l of labels) {
         const g = el('g', { class: 'series', 'data-id': l.p.id });

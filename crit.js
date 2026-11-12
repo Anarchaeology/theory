@@ -335,21 +335,21 @@
   // ---- Tables ------------------------------------------------------------------------------------------------------
 
   function buildTables() {
-    // The measured formula's crit chance up to 100% and at steps past it, for each Critical Increase, with Critical
-    // Increase alone in the last row.
+    // Critical Increase alone in the first row, then the measured formula's crit chance up to 100% and at steps past
+    // it, for each Critical Increase.
     const head = $('by-formula-head'), body = $('by-formula');
     head.append(html('th', '', 'Hit formula'), html('th', '', 'Past 100% adds'));
     for (const s of series) head.append(keyCell('th', s.color, s.name));
+    const first = html('tr');
+    first.append(html('th', '', 'Critical Increase alone'), html('td', 'none', ''));
+    for (const s of series) first.append(html('td', '', pc(alone(s.ci))));
+    body.append(first);
     for (let f = 1; f <= 1.9 + 1e-9; f += 0.1) {
       const tr = html('tr');
       tr.append(html('th', 'num', f < 1 + 1e-9 ? 'Up to 100%' : whole(f)), html('td', '', points(Math.max(0, f - 1) * PAST * 100)));
       for (const s of series) tr.append(html('td', '', pc(measured(f, s.ci))));
       body.append(tr);
     }
-    const tr = html('tr');
-    tr.append(html('th', '', 'Critical Increase alone'), html('td', 'none', ''));
-    for (const s of series) tr.append(html('td', '', pc(alone(s.ci))));
-    body.append(tr);
 
     // Every result, in order along the chart.
     const rows = $('results');

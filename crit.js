@@ -347,7 +347,7 @@
     for (let f = 1; f <= 1.9 + 1e-9; f += 0.1) {
       const tr = html('tr');
       // The first row is named in words, the rest by their number.
-      tr.append(f < 1 + 1e-9 ? html('th', 'words', 'Up to 100% hit chance, with base crit added') : html('th', 'num', whole(f)),
+      tr.append(f < 1 + 1e-9 ? html('th', 'words', 'Up to 100% hit chance, with 3% base crit') : html('th', 'num', whole(f)),
         html('td', '', points(Math.max(0, f - 1) * PAST * 100)));
       for (const s of series) tr.append(html('td', '', pc(measured(f, s.ci))));
       body.append(tr);

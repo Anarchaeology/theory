@@ -22,7 +22,7 @@
   <div class="wrap">
     <p class="crumbs"><a class="home" href="https://anarchaeology.github.io/"><img src="https://anarchaeology.github.io/logo.png" alt="" width="28" height="28">Anarchaeology</a> <span>/</span> <a href="./">Theory</a></p>
     <h1>Crit chance</h1>
-    <p class="lede">These are the crit chances measured in game, next to Critical Increase alone, the figure in common use.</p>
+    <p class="lede">These are the crit chances measured in game, next to Critical Increase alone.</p>
   </div>
 </header>
 
@@ -34,20 +34,12 @@
           <span class="group-label">Critical Increase</span>
           <span class="chips picks" id="chips"></span>
         </div>
-        <div class="seg" id="view" role="group" aria-label="What the chart shows">
-          <button type="button" data-view="crit" aria-pressed="true">Crit chance</button>
-          <button type="button" data-view="gap" aria-pressed="false">Gap from the formula</button>
-        </div>
-        <div class="opts">
-          <label class="opt"><input type="checkbox" id="opt-other" checked> Critical Increase alone</label>
-        </div>
       </div>
       <div class="chart-title">
-        <h2 id="chart-name">Crit chance by the hit formula</h2>
+        <h2>Crit chance by the hit formula</h2>
         <p class="linekeys">
-          <span id="key-formula"><i></i>the measured formula</span>
-          <span id="key-zero" hidden>0 is the measured formula</span>
-          <span id="key-other"><i class="dashed"></i>Critical Increase alone</span>
+          <span><i></i>the measured formula</span>
+          <span><i class="dashed"></i>Critical Increase alone</span>
           <span><i class="dot"></i>a result, with its 95% range</span>
         </p>
       </div>
@@ -66,7 +58,7 @@
         <tbody id="by-formula"></tbody>
       </table>
     </div>
-    <p class="prose">The crit chance by the measured formula at each Critical Increase. Up to 100% it doesn't change; past 100% it rises by a sixth of how far the hit formula runs past.</p>
+    <p class="prose">The crit chance by the measured formula at each Critical Increase. Up to a hit formula of 100%, it stays at 3% + Critical Increase. Past 100%, every 6 points of hit formula over 100% add 1 point of crit chance, so a hit formula of 130% adds 5 points.</p>
     <details class="card">
       <summary>Every result</summary>
       <div class="scroll">
@@ -110,8 +102,7 @@
     <h2>About these numbers</h2>
     <p class="prose"><b>The measured formula.</b> Crit chance is the share of landed hits that crit. The last part counts only past 100%. <span class="formula">crit chance = 3% + Critical Increase + (hit formula − 100%) ÷ 6</span></p>
     <p class="prose"><b>The hit formula.</b> The <a href="hit-chance.html">hit chance</a> before it's held at 100%. Past 100% every swing lands, but the formula keeps counting. The slider is the defender's, from −100 at full defensive to +100 at full aggressive. <span class="formula">hit formula = 50% + (AR − Def) ÷ (Def + |AR − Def|) + (slider + 100) ÷ 500</span></p>
-    <p class="prose"><b>Critical Increase.</b> The attacker's Critical Increase, as items and perks list it.</p>
-    <p class="prose"><b>Critical Increase alone.</b> The figure in common use. It takes Critical Increase as the whole crit chance, with nothing under it and nothing more past 100%.</p>
+    <p class="prose"><b>Critical Increase.</b> The attacker's Critical Increase, as items, perks, and buffs list it.</p>
     <p class="prose"><b>The results.</b> Two players swung at each other at a range of AR, defense and the defender's slider, and the crits among the hits that landed were counted. <span id="fit"></span></p>
     <p class="prose"><b>The data.</b> The results on this page are in one file: <a href="data/crit.json">crit.json</a>.</p>
   </section>

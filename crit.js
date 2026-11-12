@@ -48,7 +48,7 @@
   }
 
   let series = [], results = [], xMax = 1.5, geom = null;
-  const state = { picked: new Set(), preview: null, view: 'crit', other: true, hover: null };
+  const state = { picked: new Set(), preview: null, hover: null };
 
   // What the chart shows: the Critical Increases picked, plus the one whose button is pointed at, so pointing shows
   // what picking it would. With none picked and none pointed at, that is every one.
@@ -78,7 +78,6 @@
     xMax = Math.ceil((Math.max(1, ...results.map(r => r.f)) + 0.1) * 10) / 10;
 
     buildChips();
-    buildControls();
     buildCalculator();
     buildTables();
     showFit();
@@ -138,20 +137,6 @@
     }
   }
 
-  function buildControls() {
-    for (const b of document.querySelectorAll('#view button')) {
-      b.onclick = () => {
-        state.view = b.dataset.view;
-        for (const o of document.querySelectorAll('#view button')) o.setAttribute('aria-pressed', String(o === b));
-        $('chart-name').textContent = state.view === 'crit' ? 'Crit chance by the hit formula' : 'Gap between each result and the measured formula';
-        $('key-formula').hidden = state.view !== 'crit';
-        $('key-zero').hidden = state.view === 'crit';
-        draw(); showTip();
-      };
-    }
-    $('opt-other').onchange = e => { state.other = e.target.checked; draw(); showTip(); };
-  }
-
   // ---- The chart ---------------------------------------------------------------------------------------------------
 
   function draw() {
@@ -161,23 +146,13 @@
     const m = { t: 24, r: narrow ? 14 : 22, b: 42, l: 46 };
     const pw = W - m.l - m.r, ph = H - m.t - m.b;
     const vis = series.filter(isShown);
-    const crit = state.view === 'crit';
     // The scale follows the Critical Increases picked (and the one pointed at with them), or all of them while none is
     // picked: pointing alone doesn't move it.
     const basis = state.picked.size ? vis : series;
 
-    // Y: from 0 to far enough to hold every result's range and every line to the chart's right edge; for the gap, far
-    // enough either way to hold every result and its range.
-    let lo = 0, hi, step;
-    if (crit) {
-      const top = Math.max(10, ...basis.flatMap(s => [measured(xMax, s.ci) * 100, ...s.results.map(r => r.hi * 100)]));
-      step = top > 30 ? 5 : top > 12 ? 2.5 : 2;
-      hi = Math.ceil(top / step) * step;
-    } else {
-      const reach = Math.max(4, ...basis.flatMap(s => s.results.map(r => Math.max(r.hi - r.fit, r.fit - r.lo) * 100)));
-      step = reach > 16 ? 5 : reach > 8 ? 4 : 2;
-      hi = Math.ceil(reach / step) * step; lo = -hi;
-    }
+    // Y: from 0 to far enough to hold every result's range and every line to the chart's right edge.
+    const top = Math.max(10, ...basis.flatMap(s => [measured(xMax, s.ci) * 100, ...s.results.map(r => r.hi * 100)]));
+    const step = top > 30 ? 5 : top > 12 ? 2.5 : 2, lo = 0, hi = Math.ceil(top / step) * step;
     const x = f => m.l + f / xMax * pw;
     const y = v => m.t + (hi - v) / (hi - lo) * ph;
     geom = { W, H, m, pw, ph, x, y, narrow };
@@ -191,8 +166,7 @@
     for (let v = lo; v <= hi + 1e-9; v += step) {
       const yy = Math.round(y(v)) + 0.5, base = Math.abs(v) < 1e-9;
       grid.append(el('line', { x1: m.l, x2: m.l + pw, y1: yy, y2: yy, class: base ? 'axisline' : 'gridline' }));
-      const label = Number.isInteger(v) ? String(Math.abs(v)) : Math.abs(v).toFixed(1);
-      grid.append(el('text', { x: m.l - 8, y: yy + 4, 'text-anchor': 'end', class: 'tick' }, crit ? `${label}%` : `${v > 0 ? '+' : v < 0 ? '−' : ''}${label}`));
+      grid.append(el('text', { x: m.l - 8, y: yy + 4, 'text-anchor': 'end', class: 'tick' }, `${Number.isInteger(v) ? v : v.toFixed(1)}%`));
     }
     const xStep = pw >= 520 ? 0.25 : 0.5;
     for (let f = 0; f <= xMax + 1e-9; f += xStep) {
@@ -204,37 +178,34 @@
     grid.append(el('line', { x1: full, x2: full, y1: m.t, y2: m.t + ph, class: 'full' }));
     // On a phone the room past 100% is too narrow for it on one line.
     (narrow ? ['every swing', 'lands'] : ['every swing lands']).forEach((t, i) => grid.append(el('text', { x: full + 6, y: m.t + 11 + i * 13, class: 'tick' }, t)));
-    grid.append(el('text', { x: m.l - 38, y: 14, class: 'axis-title' }, crit ? 'Crit chance' : 'Result, against the formula, in points'));
+    grid.append(el('text', { x: m.l - 38, y: 14, class: 'axis-title' }, 'Crit chance'));
     grid.append(el('text', { x: m.l + pw, y: H - 5, 'text-anchor': 'end', class: 'axis-title' }, 'Hit formula'));
     svg.append(grid);
 
-    // A line along the axis: the measured formula, Critical Increase alone, or the gap between them. Both are straight
-    // but for the one bend at 100%.
+    // A line along the axis, the measured formula or Critical Increase alone: both straight but for the one bend at 100%.
     const path = fn => [0, 1, xMax].map((f, i) => `${i ? 'L' : 'M'}${x(f).toFixed(1)},${y(fn(f)).toFixed(1)}`).join('');
 
     // Critical Increase alone goes under everything else.
-    if (state.other) {
-      for (const s of vis) {
-        const g = el('g', { class: 'series', 'data-id': s.id, style: `--c:${s.color}`, 'clip-path': 'url(#plot-area)' });
-        g.append(el('path', { d: path(f => (crit ? alone(s.ci) : alone(s.ci) - measured(f, s.ci)) * 100), class: 'other' }));
-        svg.append(g);
-      }
+    for (const s of vis) {
+      const g = el('g', { class: 'series', 'data-id': s.id, style: `--c:${s.color}`, 'clip-path': 'url(#plot-area)' });
+      g.append(el('path', { d: path(() => alone(s.ci) * 100), class: 'other' }));
+      svg.append(g);
     }
     for (const s of vis) {
       const g = el('g', { class: 'series', 'data-id': s.id, style: `--c:${s.color}`, 'clip-path': 'url(#plot-area)' });
-      if (crit) g.append(el('path', { d: path(f => measured(f, s.ci) * 100), class: 'measured' }));
+      g.append(el('path', { d: path(f => measured(f, s.ci) * 100), class: 'measured' }));
       // Each result: its 95% range as a thin bar, the share of landed hits that crit as a dot.
       for (const r of s.results) {
-        const cx = x(r.f).toFixed(1), off = crit ? 0 : r.fit;
-        g.append(el('line', { x1: cx, x2: cx, y1: y((r.lo - off) * 100).toFixed(1), y2: y((r.hi - off) * 100).toFixed(1), class: 'whisker' }));
+        const cx = x(r.f).toFixed(1);
+        g.append(el('line', { x1: cx, x2: cx, y1: y(r.lo * 100).toFixed(1), y2: y(r.hi * 100).toFixed(1), class: 'whisker' }));
       }
       for (const r of s.results) {
-        g.append(el('circle', { cx: x(r.f).toFixed(1), cy: y((r.share - (crit ? 0 : r.fit)) * 100).toFixed(1), r: narrow ? 2.2 : 3, class: narrow ? 'reading small' : 'reading' }));
+        g.append(el('circle', { cx: x(r.f).toFixed(1), cy: y(r.share * 100).toFixed(1), r: narrow ? 2.2 : 3, class: narrow ? 'reading small' : 'reading' }));
       }
       svg.append(g);
     }
     // Each line's name sits above its right end, where the lines are furthest apart.
-    if (crit && !narrow) {
+    if (!narrow) {
       for (const s of vis) {
         const g = el('g', { class: 'series', 'data-id': s.id });
         g.append(el('text', { x: (m.l + pw - 2).toFixed(1), y: (y(measured(xMax, s.ci) * 100) - 9).toFixed(1), 'text-anchor': 'end', class: 'label' }, s.name));
@@ -259,7 +230,7 @@
     drawHover();
   }
 
-  const describe = vis => `${state.view === 'crit' ? 'Crit chance' : 'Gap between each result and the measured formula'} against the hit formula from 0 to ${whole(xMax)}, at Critical Increase ${
+  const describe = vis => `Crit chance against the hit formula from 0 to ${whole(xMax)}, at Critical Increase ${
     vis.map(s => ciText(s.ci)).join(', ')}. The tables below the chart give the same numbers.`;
 
   function drawHover() {
@@ -269,7 +240,6 @@
     if (state.hover == null) return;
     const { x, y, m, ph } = geom, hx = Math.round(x(state.hover)) + 0.5;
     g.append(el('line', { x1: hx, x2: hx, y1: m.t, y2: m.t + ph, class: 'cross' }));
-    if (state.view !== 'crit') return;
     for (const s of series) {
       if (isShown(s)) g.append(el('circle', { cx: x(state.hover), cy: y(measured(state.hover, s.ci) * 100), r: 4.5, class: 'end', style: `--c:${s.color}` }));
     }

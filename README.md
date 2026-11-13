@@ -11,6 +11,7 @@ Plain static files, no build step.
 | `index.html`, `index.js` | the section's front page: one row per page, and in its footer the latest "updated" date among their data files |
 | `ar-multiplier.html`, `ar-multiplier.js` | "Attack rating and damage": every measured profession's damage multiplier against AR on one chart, with the old number's straight line for each |
 | `data/ar-multiplier.json` | the one data file behind that page |
+| `img/prof/<id>.png` | the game's profession icons, all 14, by the data file's `id`: each measured curve ends in its own |
 | `hit-chance.html`, `hit-chance.js` | "Hit chance": every result against AR over defense, on the measured formula's curve for each of the defender's slider settings, with the linear formula's line for each, and a calculator |
 | `data/hit-chance.json` | the one data file behind that page |
 | `crit.html`, `crit.js` | "Crit chance": every result against the hit formula, on the measured formula's line for each Critical Increase, with Critical Increase alone beside each, and a calculator |

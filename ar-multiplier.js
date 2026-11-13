@@ -173,7 +173,7 @@
     const plot = $('plot');
     const W = Math.max(280, plot.clientWidth - 10), narrow = W < 560;
     const H = Math.round(Math.max(290, Math.min(470, W * 0.54)));
-    const m = { t: 24, r: narrow ? 12 : 18, b: 42, l: 46 };
+    const m = { t: 24, r: narrow ? 22 : 32, b: 42, l: 46 };
     const pw = W - m.l - m.r, ph = H - m.t - m.b;
     const vis = measured.filter(isShown);
     const mult = state.view === 'mult';
@@ -237,20 +237,20 @@
       const pts = p.pts.map(([ar, v]) => [x(ar), y(mult ? v : (v / oldAt(p, ar) - 1) * 100)]);
       g.append(el('path', { d: 'M' + pts.map(q => `${q[0].toFixed(1)},${q[1].toFixed(1)}`).join('L'), class: 'measured' }));
       // A dot at every reading, so it shows where the curve was measured and where it is only joined up. The first
-      // point is the soft cap, which every profession shares and which isn't a reading; the last is the profession's
-      // icon, below.
-      for (const q of pts.slice(1, -1)) {
+      // point is the soft cap, which every profession shares and which isn't a reading.
+      for (const q of pts.slice(1)) {
         g.append(el('circle', { cx: q[0].toFixed(1), cy: q[1].toFixed(1), r: narrow ? 2.2 : 3, class: narrow ? 'reading small' : 'reading' }));
       }
       svg.append(g);
       ends.push({ p, at: pts[pts.length - 1] });
     }
-    // Each curve ends in its profession's icon, at its last reading, ringed in its color: that tells the curves apart
-    // where their ends crowd together, as names couldn't. Drawn after every curve, so no line runs over an icon.
-    const size = narrow ? 14 : 20;
+    // Each curve's profession icon, ringed in its color, just right of its last reading, every one the same way, so they
+    // sit apart just as the curves' ends do: that tells the curves apart where their ends crowd together, as names
+    // couldn't. Drawn after every curve, so no line runs over an icon.
+    const size = narrow ? 14 : 20, gap = narrow ? 4 : 6;
     for (const { p, at } of ends) {
       const g = el('g', { class: 'series icon', 'data-id': p.id, style: `--c:${p.color}` });
-      const x0 = (at[0] - size / 2).toFixed(1), y0 = (at[1] - size / 2).toFixed(1);
+      const x0 = (at[0] + gap).toFixed(1), y0 = (at[1] - size / 2).toFixed(1);
       const img = el('image', { href: `img/prof/${p.id}.png`, x: x0, y: y0, width: size, height: size, preserveAspectRatio: 'xMidYMid slice' });
       img.append(el('title', {}, p.name));
       g.append(img, el('rect', { x: x0, y: y0, width: size, height: size, rx: 3, class: 'ring' }));

@@ -223,11 +223,17 @@
     grid.append(el('text', { x: m.l + pw, y: H - 5, 'text-anchor': 'end', class: 'axis-title' }, 'Attack rating'));
     svg.append(grid);
 
-    // The old lines go under the measured ones.
+    // The old lines go under the measured ones. Professions shown that share an old number share its line: their colors
+    // take its dashes in turn (theory.css' 5 on, 4 off), so each shows along it. One shown alone has plain dashes.
     if (mult && state.old) {
+      const sharing = new Map();
+      for (const p of vis) sharing.set(p.old, [...(sharing.get(p.old) || []), p]);
       for (const p of vis) {
+        const group = sharing.get(p.old), n = group.length, i = group.indexOf(p);
         const g = el('g', { class: 'series', 'data-id': p.id, style: `--c:${p.color}` });
-        g.append(el('line', { x1: x(xMin), y1: y(cap.multiplier), x2: x(xMax), y2: y(oldAt(p, xMax)), class: 'old' }));
+        const line = el('line', { x1: x(xMin), y1: y(cap.multiplier), x2: x(xMax), y2: y(oldAt(p, xMax)), class: 'old' });
+        if (n > 1) line.style.cssText = `stroke-dasharray: 5 ${9 * n - 5}; stroke-dashoffset: ${-9 * i}`;
+        g.append(line);
         svg.append(g);
       }
     }

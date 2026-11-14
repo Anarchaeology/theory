@@ -30,7 +30,7 @@
   };
 
   let cap, measured = [], unmeasured = [], xMin = 1000, xMax = 3000, cmpMax = 3500, geom = null;
-  const state = { picked: new Set(), preview: null, view: 'mult', old: true, hover: null, cmp: { a: null, b: null, ar: 2075 } };
+  const state = { picked: new Set(), preview: null, view: 'mult', old: false, hover: null, cmp: { a: null, b: null, ar: 2075 } };
 
   // What the chart shows: the professions picked, plus the one whose button is pointed at, so pointing shows what
   // picking it would. With none picked and none pointed at, that is every profession.
@@ -158,12 +158,12 @@
         for (const o of document.querySelectorAll('#view button')) o.setAttribute('aria-pressed', String(o === b));
         $('opt-old').disabled = state.view !== 'mult';
         $('chart-name').textContent = state.view === 'mult' ? 'Damage multiplier by attack rating' : 'Gap between each measured curve and its old line';
-        $('key-old').hidden = state.view !== 'mult';
+        $('key-old').hidden = state.view !== 'mult' || !state.old;
         $('key-zero').hidden = state.view === 'mult';
         draw(); showTip();
       };
     }
-    $('opt-old').onchange = e => { state.old = e.target.checked; draw(); showTip(); };
+    $('opt-old').onchange = e => { state.old = e.target.checked; $('key-old').hidden = state.view !== 'mult' || !state.old; draw(); showTip(); };
   }
 
   // ---- The chart ---------------------------------------------------------------------------------------------------

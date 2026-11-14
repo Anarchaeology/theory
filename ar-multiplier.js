@@ -457,11 +457,13 @@
     // the gap between the two at AVERAGE_TO. Both run over one span for all, from AR 1000 to AVERAGE_TO, where the
     // curves have all but stopped climbing: taken at each one's last reading instead, a profession read further past
     // that point would average lower and fall further under its old line for its flat stretch alone, as the old line
-    // keeps climbing there. One whose readings stop short of it is taken at its last reading.
+    // keeps climbing there. One whose readings stop short of it is taken at its last reading. Highest average first.
     const body = $('by-prof');
-    for (const p of measured) {
+    const byAverage = measured.map(p => {
       const to = Math.min(p.last, AVERAGE_TO), m = measuredAt(p, to);
-      const average = (m - cap.multiplier) / (to - cap.ar) * cap.arPerPoint;
+      return { p, to, m, average: (m - cap.multiplier) / (to - cap.ar) * cap.arPerPoint };
+    }).sort((a, b) => b.average - a.average);
+    for (const { p, to, m, average } of byAverage) {
       const tr = html('tr');
       const name = html('th'); const k = html('span', 'k'); k.style.setProperty('--c', p.color); name.append(k, p.name);
       tr.append(name, html('td', '', oldNumber(p)), html('td', '', average.toFixed(3)), html('td', '', nf(p.last)),

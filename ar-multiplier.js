@@ -65,6 +65,8 @@
   }
   // How far the comparison goes: about as high as AR gets in game, well past where the readings stop.
   const COMPARE_TO = 3500;
+  // Where the table's measured average stops: about where every measured curve has stopped climbing.
+  const AVERAGE_TO = 3560;
   const valueAt = (p, ar) => state.view === 'mult' ? measuredAt(p, ar) : gapAt(p, ar);
 
   fetch('data/ar-multiplier.json')
@@ -452,11 +454,14 @@
 
   function buildTables() {
     // One row per measured profession: what the old number says, what the readings average, and where the two stand at
-    // the last reading.
+    // the last reading. The average runs over one span for all, from AR 1000 to AVERAGE_TO, where the curves have all
+    // but stopped climbing: run to each one's last reading instead, a profession read further past that point would
+    // average lower for its flat stretch alone. One whose readings stop short of it averages to its last reading.
     const body = $('by-prof');
     for (const p of measured) {
       const lastM = p.pts[p.pts.length - 1][1], lastS = oldAt(p, p.last);
-      const average = (lastM - cap.multiplier) / (p.last - cap.ar) * cap.arPerPoint;
+      const to = Math.min(p.last, AVERAGE_TO);
+      const average = (measuredAt(p, to) - cap.multiplier) / (to - cap.ar) * cap.arPerPoint;
       const tr = html('tr');
       const name = html('th'); const k = html('span', 'k'); k.style.setProperty('--c', p.color); name.append(k, p.name);
       const gap = html('td', '', pct((lastM / lastS - 1) * 100));

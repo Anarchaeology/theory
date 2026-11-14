@@ -67,6 +67,11 @@
   const COMPARE_TO = 3500;
   // Where the table's measured average stops: about where every measured curve has stopped climbing.
   const AVERAGE_TO = 3560;
+  // The table's example crit: a Freedom Arms G2 (26–194, crit bonus 650, no MBS) on a target whose AC holds every normal
+  // hit to the weapon's minimum, with no add damage. Such a crit is the minimum plus the crit bonus, times the multiplier,
+  // in whole points as the game writes damage.
+  const G2 = { min: 26, critBonus: 650 };
+  const g2Crit = multiplier => Math.floor((G2.min + G2.critBonus) * multiplier);
   const valueAt = (p, ar) => state.view === 'mult' ? measuredAt(p, ar) : gapAt(p, ar);
 
   fetch('data/ar-multiplier.json')
@@ -467,7 +472,7 @@
       const tr = html('tr');
       const name = html('th'); const k = html('span', 'k'); k.style.setProperty('--c', p.color); name.append(k, p.name);
       tr.append(name, html('td', '', oldNumber(p)), html('td', '', average.toFixed(3)), html('td', '', nf(p.last)),
-        html('td', '', pct((m / oldAt(p, to) - 1) * 100)));
+        html('td', '', pct((m / oldAt(p, to) - 1) * 100)), html('td', '', nf(g2Crit(p.pts[p.pts.length - 1][1]))));
       body.append(tr);
     }
     $('unmeasured').textContent = unmeasured.length

@@ -67,7 +67,7 @@
   const COMPARE_TO = 3500;
   // Where the table's measured average stops: about where every measured curve has stopped climbing.
   const AVERAGE_TO = 3560;
-  // The table's example crit: a Freedom Arms G2 (26–194, crit bonus 650, no MBS) on a target whose AC holds every normal
+  // The table's example crit: a Freedom Arms 3927 G2 (26–194, crit bonus 650, no MBS) on a target whose AC holds every normal
   // hit to the weapon's minimum, with no add damage. Such a crit is the minimum plus the crit bonus, times the multiplier,
   // in whole points as the game writes damage.
   const G2 = { min: 26, critBonus: 650 };

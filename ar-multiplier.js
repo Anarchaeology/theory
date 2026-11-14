@@ -453,20 +453,19 @@
   // ---- Tables ------------------------------------------------------------------------------------------------------
 
   function buildTables() {
-    // One row per measured profession: what the old number says, what the readings average, and where the two stand at
-    // the last reading. The average runs over one span for all, from AR 1000 to AVERAGE_TO, where the curves have all
-    // but stopped climbing: run to each one's last reading instead, a profession read further past that point would
-    // average lower for its flat stretch alone. One whose readings stop short of it averages to its last reading.
+    // One row per measured profession: what the old number says, what the readings average, how far they were read, and
+    // the gap between the two at AVERAGE_TO. Both run over one span for all, from AR 1000 to AVERAGE_TO, where the
+    // curves have all but stopped climbing: taken at each one's last reading instead, a profession read further past
+    // that point would average lower and fall further under its old line for its flat stretch alone, as the old line
+    // keeps climbing there. One whose readings stop short of it is taken at its last reading.
     const body = $('by-prof');
     for (const p of measured) {
-      const lastM = p.pts[p.pts.length - 1][1], lastS = oldAt(p, p.last);
-      const to = Math.min(p.last, AVERAGE_TO);
-      const average = (measuredAt(p, to) - cap.multiplier) / (to - cap.ar) * cap.arPerPoint;
+      const to = Math.min(p.last, AVERAGE_TO), m = measuredAt(p, to);
+      const average = (m - cap.multiplier) / (to - cap.ar) * cap.arPerPoint;
       const tr = html('tr');
       const name = html('th'); const k = html('span', 'k'); k.style.setProperty('--c', p.color); name.append(k, p.name);
-      const gap = html('td', '', pct((lastM / lastS - 1) * 100));
       tr.append(name, html('td', '', oldNumber(p)), html('td', '', average.toFixed(3)), html('td', '', nf(p.last)),
-        html('td', '', f3(lastM)), html('td', '', f3(lastS)), gap);
+        html('td', '', pct((m / oldAt(p, to) - 1) * 100)));
       body.append(tr);
     }
     $('unmeasured').textContent = unmeasured.length

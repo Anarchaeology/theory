@@ -254,9 +254,27 @@
     // sit apart just as the curves' ends do: that tells the curves apart where their ends crowd together, as names
     // couldn't. Drawn after every curve, so no line runs over an icon.
     const size = narrow ? 14 : 20, gap = narrow ? 4 : 6;
-    for (const { p, at } of ends) {
+    // Where two curves end so close that their icons would cover each other, the two are pushed apart up and down,
+    // the higher curve's up, just far enough that their rings clear (a ring's stroke reaches 1 past the icon). Each
+    // stays at its own reading's AR, and is moved only as far as it needs to be.
+    const clear = size + 3;
+    const icons = ends.map(({ p, at }) => ({ p, x: at[0] + gap, y: at[1] }));
+    for (let pass = 0; pass < 20; pass++) {
+      let moved = false;
+      for (let i = 0; i < icons.length; i++) {
+        for (let j = i + 1; j < icons.length; j++) {
+          const a = icons[i], b = icons[j];
+          if (Math.abs(a.x - b.x) >= clear || Math.abs(a.y - b.y) >= clear - 1e-6) continue;
+          const [up, down] = a.y < b.y || (a.y === b.y && a.p.id < b.p.id) ? [a, b] : [b, a];
+          const push = (clear - (down.y - up.y)) / 2;
+          up.y -= push; down.y += push; moved = true;
+        }
+      }
+      if (!moved) break;
+    }
+    for (const { p, x: ix, y: iy } of icons) {
       const g = el('g', { class: 'series icon', 'data-id': p.id, style: `--c:${p.color}` });
-      const x0 = (at[0] + gap).toFixed(1), y0 = (at[1] - size / 2).toFixed(1);
+      const x0 = ix.toFixed(1), y0 = (iy - size / 2).toFixed(1);
       const img = el('image', { href: `img/prof/${p.id}.png`, x: x0, y: y0, width: size, height: size, preserveAspectRatio: 'xMidYMid slice' });
       img.append(el('title', {}, p.name));
       g.append(img, el('rect', { x: x0, y: y0, width: size, height: size, rx: 3, class: 'ring' }));

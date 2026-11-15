@@ -101,7 +101,7 @@
   <section>
     <h2>About these numbers</h2>
     <p class="prose"><b>The measured formula.</b> Crit chance is the share of landed hits that crit. The last part counts only past 100%. <span class="formula">crit chance = 3% + Critical Increase + (hit formula − 100%) ÷ 6</span></p>
-    <p class="prose"><b>The hit formula.</b> The <a href="hit-chance.html">hit chance</a> before it's held at 100%. Past 100% every swing lands, but the formula keeps counting. The slider is the defender's, from −100 at full defensive to +100 at full aggressive. <span class="formula">hit formula = 50% + (AR − Def) ÷ (Def + |AR − Def|) + (slider + 100) ÷ 500</span></p>
+    <p class="prose"><b>The hit formula.</b> The <a href="hit-chance.html">hit chance</a> before it's held at 100%. Past 100% every swing lands, but the formula keeps counting. The slider is the defender's, from −100 at full defensive to +100 at full aggressive. The attacker's slider has no effect on hit chance. <span class="formula">hit formula = 50% + (AR − Def) ÷ (Def + |AR − Def|) + (slider + 100) ÷ 500</span></p>
     <p class="prose"><b>Critical Increase.</b> The attacker's Critical Increase, as items, perks, and buffs list it.</p>
     <p class="prose"><b>The results.</b> Two players swung at each other at a range of AR, defense and the defender's slider, and the crits among the hits that landed were counted. <span id="fit"></span></p>
     <p class="prose"><b>The data.</b> The results on this page are in one file: <a href="data/crit.json">crit.json</a>.</p>

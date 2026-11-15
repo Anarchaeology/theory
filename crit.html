@@ -91,8 +91,10 @@
         <label>AR <input type="number" id="calc-ar" value="1000" min="1" step="1" inputmode="numeric"></label>
         <label>Defense <input type="number" id="calc-def" value="1000" min="1" step="1" inputmode="numeric"></label>
         <label>Critical Increase <input type="number" id="calc-ci" value="10" min="0" step="1" inputmode="numeric"></label>
-        <label class="wide">Defender's slider <input type="range" id="calc-slider" min="-100" max="100" step="1" value="0"></label>
-        <span class="num" id="calc-slider-name"></span>
+        <span class="slider-pick">
+          <label class="wide">Defender's slider <input type="range" id="calc-slider" min="-100" max="100" step="1" value="0"></label>
+          <span class="num" id="calc-slider-name"></span>
+        </span>
       </div>
       <p class="verdict" id="calc-out" aria-live="polite"></p>
     </div>

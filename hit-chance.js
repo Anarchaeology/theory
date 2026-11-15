@@ -226,7 +226,7 @@
     if (hit && !narrow) {
       for (const s of vis) {
         const at = 0.46, g = el('g', { class: 'series', 'data-id': s.id });
-        g.append(el('text', { x: (x(at) - 2).toFixed(1), y: (y(formula(at, s.slider) * 100) - 9).toFixed(1), 'text-anchor': 'end', class: 'label' }, s.name));
+        g.append(el('text', { x: (x(at) - 2).toFixed(1), y: (y(formula(at, s.slider) * 100) - 9).toFixed(1), 'text-anchor': 'end', class: 'label' }, `Defender ${s.name.toLowerCase()}`));
         svg.append(g);
       }
     }

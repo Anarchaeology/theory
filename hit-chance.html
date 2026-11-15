@@ -54,7 +54,7 @@
       <div class="plot" id="plot" tabindex="0" role="slider" aria-label="AR over defense to read the hit chance at">
         <div class="tip" id="tip" hidden></div>
       </div>
-      <p class="caption">Each dot is a result: the share of swings that landed at one AR, defense and slider setting. The bar through it is its 95% range: given how many swings were counted, the true hit chance falls within it 19 times out of 20. The fewer the swings, the longer the bar. <span id="counts"></span></p>
+      <p class="caption">Each dot is a result: the share of swings that landed at one AR, defense and the defender's slider setting. The bar through it is its 95% range: given how many swings were counted, the true hit chance falls within it 19 times out of 20. The fewer the swings, the longer the bar. <span id="counts"></span></p>
     </div>
   </section>
 
@@ -98,8 +98,10 @@
       <div class="pickers">
         <label>AR <input type="number" id="calc-ar" value="1000" min="1" step="1" inputmode="numeric"></label>
         <label>Defense <input type="number" id="calc-def" value="1000" min="1" step="1" inputmode="numeric"></label>
-        <label class="wide">Defender's slider <input type="range" id="calc-slider" min="-100" max="100" step="1" value="0"></label>
-        <span class="num" id="calc-slider-name"></span>
+        <span class="slider-pick">
+          <label class="wide">Defender's slider <input type="range" id="calc-slider" min="-100" max="100" step="1" value="0"></label>
+          <span class="num" id="calc-slider-name"></span>
+        </span>
       </div>
       <p class="verdict" id="calc-out" aria-live="polite"></p>
     </div>

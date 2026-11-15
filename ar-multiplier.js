@@ -30,7 +30,7 @@
   };
 
   let cap, measured = [], unmeasured = [], xMin = 1000, xMax = 3000, cmpMax = 3500, geom = null;
-  const state = { picked: new Set(), preview: null, view: 'mult', old: false, hover: null, cmp: { a: null, b: null, ar: 2075 } };
+  const state = { picked: new Set(), preview: null, view: 'mult', old: true, hover: null, cmp: { a: null, b: null, ar: 2075 } };
 
   // What the chart shows: the professions picked, plus the one whose button is pointed at, so pointing shows what
   // picking it would. With none picked and none pointed at, that is every profession.

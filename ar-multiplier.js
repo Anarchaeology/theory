@@ -67,12 +67,17 @@
   const COMPARE_TO = 3500;
   // Where the table's measured average stops: about where every measured curve has stopped climbing.
   const AVERAGE_TO = 3560;
-  // The table's example crits: what a weapon crits for at each profession's top measured AR, held to the weapon's MBS, on
-  // a target whose AC holds every normal hit to the weapon's minimum, with no add damage. Such a crit is the minimum plus
-  // the crit bonus, times the multiplier, in whole points as the game writes damage.
-  const G2 = { min: 26, critBonus: 650, mbs: Infinity };   // Freedom Arms 3927 G2: 26–194 (650), no MBS
-  const ULMP = { min: 3, critBonus: 850, mbs: 2500 };      // Ultra-Light Missile Pistol Raid 9-X: 3–142 (850), MBS 2500
-  const critFrom = (w, p) => Math.floor((w.min + w.critBonus) * measuredAt(p, Math.min(p.last, w.mbs)));
+  // The table's example crits: what a weapon crits for at each profession's top measured AR, held to the weapon's MBS,
+  // with no add damage, from a high AC target to one with no AC. AC comes off the top of the roll and never takes it
+  // under the minimum, and crits take the top: so against AC high enough to hold every hit to the weapon's minimum a crit
+  // is the minimum plus the crit bonus, times the multiplier, and against none the maximum plus the crit bonus, times
+  // the multiplier. In whole points, as the game writes damage.
+  const G2 = { min: 26, max: 194, critBonus: 650, mbs: Infinity };  // Freedom Arms 3927 G2: 26–194 (650), no MBS
+  const ULMP = { min: 3, max: 142, critBonus: 850, mbs: 2500 };     // Ultra-Light Missile Pistol Raid 9-X: 3–142 (850), MBS 2500
+  const critRange = (w, p) => {
+    const m = measuredAt(p, Math.min(p.last, w.mbs));
+    return `${nf(Math.floor((w.min + w.critBonus) * m))}–${nf(Math.floor((w.max + w.critBonus) * m))}`;
+  };
   const valueAt = (p, ar) => state.view === 'mult' ? measuredAt(p, ar) : gapAt(p, ar);
 
   fetch('data/ar-multiplier.json')
@@ -473,7 +478,7 @@
       const tr = html('tr');
       const name = html('th'); const k = html('span', 'k'); k.style.setProperty('--c', p.color); name.append(k, p.name);
       tr.append(name, html('td', '', oldNumber(p)), html('td', '', average.toFixed(3)), html('td', '', nf(p.last)),
-        html('td', '', pct((m / oldAt(p, to) - 1) * 100)), html('td', '', nf(critFrom(G2, p))), html('td', '', nf(critFrom(ULMP, p))));
+        html('td', '', pct((m / oldAt(p, to) - 1) * 100)), html('td', '', critRange(G2, p)), html('td', '', critRange(ULMP, p)));
       body.append(tr);
     }
     $('unmeasured').textContent = unmeasured.length

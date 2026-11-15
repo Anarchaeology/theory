@@ -116,7 +116,7 @@
       b.style.setProperty('--c', s.color);
       b.dataset.id = s.id;
       b.setAttribute('aria-pressed', 'false');
-      b.append(html('span', 'key'), html('span', '', s.name));
+      b.append(html('span', 'key'), html('span', '', `Defender ${s.name.toLowerCase()}`));
       b.onclick = () => {
         state.picked.has(s.id) ? state.picked.delete(s.id) : state.picked.add(s.id);
         b.setAttribute('aria-pressed', String(state.picked.has(s.id)));
@@ -222,15 +222,6 @@
       }
       svg.append(g);
     }
-    // Each curve's name sits above it on the left, where the three are furthest apart.
-    if (hit && !narrow) {
-      for (const s of vis) {
-        const at = 0.46, g = el('g', { class: 'series', 'data-id': s.id });
-        g.append(el('text', { x: (x(at) - 2).toFixed(1), y: (y(formula(at, s.slider) * 100) - 9).toFixed(1), 'text-anchor': 'end', class: 'label' }, `Defender ${s.name.toLowerCase()}`));
-        svg.append(g);
-      }
-    }
-
     svg.append(el('g', { id: 'hover' }));
     const area = el('rect', { x: m.l, y: m.t - 6, width: pw, height: ph + 12, class: 'hit' });
     svg.append(area);

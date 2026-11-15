@@ -129,6 +129,8 @@ section > h2 { font-size: 1.3rem; }
 .plot .axisline { stroke: var(--axis); stroke-width: 1; }
 .plot .tick { fill: var(--muted); font: 11px var(--mono); font-variant-numeric: tabular-nums; }
 .plot .axis-title { fill: var(--muted); font: 12px var(--body); }
+/* A curve's name written beside it: the page's text color, so it reads in both themes (SVG text is black otherwise). */
+.plot .label { fill: var(--ink); }
 .plot .measured { fill: none; stroke: var(--c); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
 .plot .old, .plot .other { fill: none; stroke: var(--c); stroke-width: 1.5; stroke-dasharray: 5 4; opacity: 0.7; }
 .plot .reading { fill: var(--c); stroke: var(--surface); stroke-width: 1.5; }
@@ -193,6 +195,8 @@ input[type="range"] { accent-color: var(--notum); flex: 1 1 12rem; min-width: 8r
 table.tbl { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
 .tbl th, .tbl td { padding: 0.45rem 0.9rem; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line); }
 .tbl thead th { font: 500 0.75rem var(--mono); letter-spacing: 0.04em; color: var(--muted); vertical-align: bottom; white-space: normal; }
+/* A short heading kept whole where the screen has the room; the longer ones beside it wrap to make it. */
+@media (min-width: 960px) { .tbl thead th.one-line { white-space: nowrap; } }
 .tbl th:first-child, .tbl td:first-child { text-align: left; }
 .tbl tbody tr:last-child td, .tbl tbody tr:last-child th { border-bottom: 0; }
 .tbl tbody th { font-weight: 600; }

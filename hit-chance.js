@@ -287,9 +287,9 @@
       table.append(tr);
       spoken.push(`${s.name} ${pc(f)}, by the linear formula ${pc(o)}`);
     }
-    tip.replaceChildren(html('h3', '', `AR at ${ratio.toFixed(2)} × defense`), table);
+    tip.replaceChildren(html('h3', '', `Hit chance for AR at ${ratio.toFixed(2)} × defense`), table);
     tip.hidden = false;
-    plot.setAttribute('aria-valuetext', `AR at ${ratio.toFixed(2)} times the defense: ${spoken.join('; ')}`);
+    plot.setAttribute('aria-valuetext', `Hit chance for AR at ${ratio.toFixed(2)} times the defense: ${spoken.join('; ')}`);
     if (!docked && geom) {
       // Parked in the plot's top left corner, which the curves leave empty. While the crosshair is under that corner
       // it moves to the crosshair's right.

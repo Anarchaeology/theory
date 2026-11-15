@@ -268,9 +268,9 @@
       table.append(tr);
       spoken.push(`${s.name} ${pc(c)}, by Critical Increase alone ${pc(o)}`);
     }
-    tip.replaceChildren(html('h3', '', `Hit formula at ${whole(f)}${f > 1 ? ', past 100%' : ''}`), table);
+    tip.replaceChildren(html('h3', '', `Crit chance for hit formula at ${whole(f)}${f > 1 ? ', past 100%' : ''}`), table);
     tip.hidden = false;
-    plot.setAttribute('aria-valuetext', `Hit formula at ${whole(f)}: ${spoken.join('; ')}`);
+    plot.setAttribute('aria-valuetext', `Crit chance for hit formula at ${whole(f)}: ${spoken.join('; ')}`);
     if (!docked && geom) {
       // Parked in the plot's top left corner, which the lines leave empty. While the crosshair is under that corner
       // it moves to the crosshair's right.

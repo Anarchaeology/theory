@@ -365,9 +365,10 @@
       if (m == null && state.view === 'mult') tr.lastChild.colSpan = 2;
       table.append(tr);
     }
-    tip.replaceChildren(html('h3', '', `AR ${nf(ar)}`), table);
+    const heading = `${state.view === 'mult' ? 'Damage multiplier' : 'Gap from the old line'} for AR ${nf(ar)}`;
+    tip.replaceChildren(html('h3', '', heading), table);
     tip.hidden = false;
-    plot.setAttribute('aria-valuetext', `AR ${nf(ar)}: ${spoken.join('; ')}`);
+    plot.setAttribute('aria-valuetext', `${heading}: ${spoken.join('; ')}`);
     if (!docked && geom) {
       // Parked in the plot's top left corner, which the curves leave empty, so it never covers the lines around the
       // crosshair. While the crosshair is under that corner it moves to the crosshair's right.

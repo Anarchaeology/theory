@@ -72,7 +72,7 @@
               <th>Caster's slider</th>
               <th>Nano skill</th>
               <th>Nano resist</th>
-              <th>Skill ÷ resist</th>
+              <th>Nano skill ÷ nano resist</th>
               <th>Casts</th>
               <th>Landed</th>
               <th>95% range</th>
@@ -103,10 +103,10 @@
 
   <section>
     <h2>About these numbers</h2>
-    <p class="prose"><b>The measured formula.</b> The <a href="hit-chance.html">hit chance</a> formula with nano skill for AR and nano resist for defense, and a flat <span class="flat">4.2</span> points added. The slider is the target's, from −100 at full defensive to +100 at full aggressive. The caster's slider has no effect. <span class="formula">land chance = 50% + (NS − NR) ÷ (NR + |NS − NR|) + (slider + 100) ÷ 500 + <span class="flat">4.2</span>%</span></p>
+    <p class="prose"><b>The measured formula.</b> The <a href="hit-chance.html">hit chance</a> formula with nano skill for AR and nano resist for defense, and a flat <span class="flat">4</span> points added. The slider is the target's, from −100 at full defensive to +100 at full aggressive. The caster's slider has no effect on land chance. <span class="formula">land chance = 50% + (NS − NR) ÷ (NR + |NS − NR|) + (slider + 100) ÷ 500 + <span class="flat">4</span>%</span></p>
     <p class="prose"><b>Nano skill and nano resist.</b> Nano skill is the caster's skill in what the nano casts on, and nano resist the target's. Add-all-offense and add-all-defense don't count. The results were taken with Corruption, which casts on Matter Creation and Time and Space at 50% each against Nano Resist, with the two skills kept equal.</p>
     <p class="prose"><b>The results.</b> Two players cast a nano at each other with nano skill from 0.028 to 2.47 times the nano resist, at three of the target's slider settings. <span id="fit"></span></p>
-    <p class="prose"><b>Other observations.</b> Only the ratio of nano skill to nano resist matters, not their raw values: the results held with nano skills from 36 to 1,300. Only the target's slider matters, and it adds 20 points for every 100, as it does for a swing. Even at 0.028 times the nano resist about 1 cast in 20 landed, and from about 1.85 times it every cast did.</p>
+    <p class="prose"><b>Other observations.</b> Only the ratio of nano skill to nano resist matters, not their raw values: the results held with nano skills from 36 to 1,300. Only the target's slider matters, and it adds 20 points for every 100, as it does for a swing. Even at 0.028 times the nano resist about 1 cast in 20 landed. From about 1.85 times the nano resist, every cast landed.</p>
     <p class="prose"><b>The data.</b> The results on this page are in one file: <a href="data/nano-chance.json">nano-chance.json</a>.</p>
   </section>
 </main>

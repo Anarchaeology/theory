@@ -142,7 +142,7 @@ It reads the hit lab's nano test (`HitData/nano/steps.tsv`) and keeps only the n
 ```
 {
   "updated": "2026-11-26",
-  "sourceCommit": "1feb92c",
+  "sourceCommit": "efa8c82",
   "results": [
     { "skill": 36, "resist": 1300, "slider": -100, "casterSlider": -100, "casts": 572, "landed": 26 },
     ...

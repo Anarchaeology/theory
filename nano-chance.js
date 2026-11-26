@@ -316,8 +316,8 @@
       under++;
     }
     const parts = [];
-    if (under) parts.push(`Under 100%, the ${nf(under)} results sit ${(100 * wy / w).toFixed(1)} ± ${(100 / Math.sqrt(w)).toFixed(1)} points above the hit chance formula, on average, where the measured formula adds ${(FLAT * 100).toFixed(1).replace(/\.0$/, '')}. Their chi-square against it is ${chi.toFixed(1)}, ${
-      chi <= under + 2 * Math.sqrt(2 * under) ? 'about the number of results, as chance alone gives' : 'more than the number of results: more scatter than chance alone gives'}.`);
+    if (under) parts.push(`Under 100%, the ${nf(under)} results sit ${(100 * wy / w).toFixed(1)} ± ${(100 / Math.sqrt(w)).toFixed(1)} points above the hit chance formula, on average, where the measured formula adds ${(FLAT * 100).toFixed(1).replace(/\.0$/, '')}. They scatter about it ${
+      chi <= under + 2 * Math.sqrt(2 * under) ? 'as much as chance alone gives' : 'more than chance alone gives'}.`);
     if (full) parts.push(held === full ? `Where it says 100%, every cast landed, in all ${nf(full)} results.` : `Where it says 100%, every cast landed in ${nf(held)} of ${nf(full)} results.`);
     $('fit').textContent = parts.join(' ');
   }

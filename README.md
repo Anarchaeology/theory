@@ -16,8 +16,10 @@ Plain static files, no build step.
 | `data/hit-chance.json` | the one data file behind that page |
 | `crit.html`, `crit.js` | "Crit chance": every result against the hit formula, on the measured formula's line for each Critical Increase, with Critical Increase alone beside each, and a calculator |
 | `data/crit.json` | the one data file behind that page |
+| `nano-chance.html`, `nano-chance.js` | "Nano land chance": every result against nano skill over nano resist, on the measured formula's curve for each of the target's slider settings, and a calculator |
+| `data/nano-chance.json` | the one data file behind that page |
 | `theory.css` | the look, shared by every page here (the gallery's colors and typefaces) |
-| `tools/ExportArMultiplier.cs`, `tools/ExportHitChance.cs`, `tools/ExportCrit.cs` | write the three data files from a theorycrafter checkout |
+| `tools/ExportArMultiplier.cs`, `tools/ExportHitChance.cs`, `tools/ExportCrit.cs`, `tools/ExportNanoChance.cs` | write the four data files from a theorycrafter checkout |
 
 To look at the pages on your own PC, serve this folder with any static web server (the chart page loads its data
 file, which a page opened straight from disk can't do):
@@ -30,7 +32,7 @@ then open http://localhost:8138/. The logo and icon come from the live gallery.
 
 ## The data files
 
-All three are written by a tool and never edited by hand.
+All four are written by a tool and never edited by hand.
 
 ### `data/ar-multiplier.json`
 
@@ -128,6 +130,35 @@ More results, from a plan already read or a new one, are a change to this file o
 the measured formula and Critical Increase alone, are written in `crit.js`; each Critical Increase's color is there too
 (`COLORS`).
 
+### `data/nano-chance.json`
+
+```
+cd tools
+dotnet run ExportNanoChance.cs -- "PATH\TO\ao-theorycrafter" "..\data\nano-chance.json"
+```
+
+It reads the hit lab's nano test (`HitData/nano/steps.tsv`) and keeps only the numbers.
+
+```
+{
+  "updated": "2026-11-26",
+  "sourceCommit": "1feb92c",
+  "results": [
+    { "skill": 36, "resist": 1300, "slider": -100, "casterSlider": -100, "casts": 572, "landed": 26 },
+    ...
+  ]
+}
+```
+
+- One entry per result: a caster's nano skill against a target's nano resist, with the target's slider (`slider`) and
+  the caster's own, and how many casts were made and landed.
+- The page works out the rest: nano skill over nano resist, the share that landed and its 95% range, and how well the
+  measured formula fits the results (under "The results").
+
+More results are a change to this file only. The measured formula the page draws is written in `nano-chance.js`; its
+one number set from the results is `FLAT` there, and the page says it from that wherever it states it. The slider
+settings' names and colors are there too (`SLIDERS`), the same as the hit chance page's.
+
 ## Chart colors
 
 **The attack rating chart.** Each of the 14 professions has one fixed color, `--p-<id>` in `theory.css`, which
@@ -173,6 +204,9 @@ curves can cross:
 node validate_palette.js "#6635a3,#c94779,#1aa1c9,#09672e,#b18e15" --mode light --surface "#ffffff" --pairs all
 node validate_palette.js "#8758c9,#e05c8c,#179fc7,#0a7e3a,#af8c11" --mode dark --surface "#162024" --pairs all
 ```
+
+**The nano land chance chart.** The hit chance chart's colors, for the target's slider settings (`SLIDERS` in
+`nano-chance.js`).
 
 **The crit chart.** One color per Critical Increase, from the same five (`COLORS` in `crit.js`): 2 is `--s-cyan` and 7
 `--s-pink`. One with no color there draws in gray.

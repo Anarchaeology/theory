@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nano land chance - Anarchaeology</title>
+<meta name="description" content="How often a nano lands in Anarchy Online, by nano skill against nano resist and the target's slider, measured in game.">
+<link rel="icon" type="image/png" href="https://anarchaeology.github.io/favicon.png">
+<link rel="apple-touch-icon" href="https://anarchaeology.github.io/logo.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Nano land chance">
+<meta property="og:description" content="How often a nano lands in Anarchy Online, by nano skill against nano resist and the target's slider, measured in game.">
+<meta property="og:image" content="https://anarchaeology.github.io/logo.png">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<link rel="stylesheet" href="theory.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <p class="crumbs"><a class="home" href="https://anarchaeology.github.io/"><img src="https://anarchaeology.github.io/logo.png" alt="" width="28" height="28">Anarchaeology</a> <span>/</span> <a href="./">Theory</a></p>
+    <h1>Nano land chance</h1>
+    <p class="lede">Nano land chances measured in game.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section aria-label="The chart">
+    <div class="card">
+      <div class="controls">
+        <div class="chips" role="group" aria-label="Target's slider settings shown">
+          <span class="chips picks" id="chips"></span>
+        </div>
+        <div class="seg" id="view" role="group" aria-label="What the chart shows">
+          <button type="button" data-view="land" aria-pressed="true">Land chance</button>
+          <button type="button" data-view="gap" aria-pressed="false">Gap from the formula</button>
+        </div>
+      </div>
+      <div class="chart-title">
+        <h2 id="chart-name">Nano land chance by nano skill over nano resist</h2>
+        <p class="linekeys">
+          <span id="key-formula"><i></i>the measured formula</span>
+          <span id="key-zero" hidden>0 is the measured formula</span>
+          <span><i class="dot"></i>a result, with its 95% range</span>
+        </p>
+      </div>
+      <div class="plot" id="plot" tabindex="0" role="slider" aria-label="Nano skill over nano resist to read the land chance at">
+        <div class="tip" id="tip" hidden></div>
+      </div>
+      <p class="caption">Each dot is a result: the share of casts that landed at one nano skill, nano resist and the target's slider setting. The bar through it is its 95% range: given how many casts were counted, the true land chance falls within it 19 times out of 20. The fewer the casts, the longer the bar. <span id="counts"></span></p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Nano land chance by nano skill over nano resist</h2>
+    <div class="card scroll">
+      <table class="tbl">
+        <thead><tr id="by-ratio-head"></tr></thead>
+        <tbody id="by-ratio"></tbody>
+      </table>
+    </div>
+    <p class="prose">The land chance by the measured formula at each of the target's slider settings.</p>
+    <details class="card">
+      <summary>Every result</summary>
+      <div class="scroll">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Target's slider</th>
+              <th>Caster's slider</th>
+              <th>Nano skill</th>
+              <th>Nano resist</th>
+              <th>Skill ÷ resist</th>
+              <th>Casts</th>
+              <th>Landed</th>
+              <th>95% range</th>
+              <th>Measured formula</th>
+              <th>Gap, in points</th>
+            </tr>
+          </thead>
+          <tbody id="results"></tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2>Work out a land chance</h2>
+    <div class="card compare">
+      <div class="pickers">
+        <label>Nano skill <input type="number" id="calc-skill" value="1000" min="1" step="1" inputmode="numeric"></label>
+        <label>Nano resist <input type="number" id="calc-resist" value="1000" min="1" step="1" inputmode="numeric"></label>
+        <span class="slider-pick">
+          <label class="wide">Target's slider <input type="range" id="calc-slider" min="-100" max="100" step="1" value="0"></label>
+          <span class="num" id="calc-slider-name"></span>
+        </span>
+      </div>
+      <p class="verdict" id="calc-out" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section>
+    <h2>About these numbers</h2>
+    <p class="prose"><b>The measured formula.</b> The <a href="hit-chance.html">hit chance</a> formula with nano skill for AR and nano resist for defense, and a flat <span class="flat">4.2</span> points added. The slider is the target's, from −100 at full defensive to +100 at full aggressive. The caster's slider has no effect. <span class="formula">land chance = 50% + (NS − NR) ÷ (NR + |NS − NR|) + (slider + 100) ÷ 500 + <span class="flat">4.2</span>%</span></p>
+    <p class="prose"><b>Nano skill and nano resist.</b> Nano skill is the caster's skill in what the nano casts on, and nano resist the target's. Add-all-offense and add-all-defense don't count. The results were taken with Corruption, which casts on Matter Creation and Time and Space at 50% each against Nano Resist, with the two skills kept equal.</p>
+    <p class="prose"><b>The results.</b> Two players cast a nano at each other with nano skill from 0.028 to 2.47 times the nano resist, at three of the target's slider settings. <span id="fit"></span></p>
+    <p class="prose"><b>Other observations.</b> Only the ratio of nano skill to nano resist matters, not their raw values: the results held with nano skills from 36 to 1,300. Only the target's slider matters, and it adds 20 points for every 100, as it does for a swing. Even at 0.028 times the nano resist about 1 cast in 20 landed, and from about 1.85 times it every cast did.</p>
+    <p class="prose"><b>The data.</b> The results on this page are in one file: <a href="data/nano-chance.json">nano-chance.json</a>.</p>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <span id="updated"></span>
+  <span>Thanks to Faffy for his work in compiling community numbers and creating a <a href="https://docs.google.com/spreadsheets/d/1JGKEOqTXCvGpDocd1JVplnxtdCJcMkKC4TuaMKstWxs/edit?gid=158211460#gid=158211460">damage calculator</a>, which served as a baseline for this research.</span>
+</footer>
+
+<script src="nano-chance.js" defer></script>
+</body>
+</html>
